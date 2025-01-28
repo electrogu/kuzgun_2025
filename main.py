@@ -1,6 +1,5 @@
 from camera_handler import CameraHandler
 from image_processor import ImageProcessor
-#from control_unit import ControlUnit
 import cv2
 
 if __name__ == "__main__":
@@ -8,13 +7,15 @@ if __name__ == "__main__":
     #            H    S    V
     lower_red = [161, 155, 84]
     upper_red = [179, 255, 255]
+    lower_blue = [94, 80, 2]
+    upper_blue = [126, 255, 255]
     resolution = (1280, 720)
     camera_index = 0
+    g = 9.80665
 
     # Initialize components
-    camera = CameraHandler(camera_index=camera_index ,resolution=resolution)
-    processor = ImageProcessor(lower_red, upper_red)
-    #control = ControlUnit()
+    camera = CameraHandler(camera_index=camera_index, resolution=resolution)
+    processor = ImageProcessor([(lower_red, upper_red), (lower_blue, upper_blue)])
 
     try:
         while True:
@@ -22,27 +23,24 @@ if __name__ == "__main__":
             mask = processor.process_frame(frame)
             largest_contour, area, center = processor.find_largest_contour(mask)
 
-
-
-
-            #control.check_and_trigger(largest_contour)
-            
-            
-            
-
-            # Display the results
-                
             if largest_contour is not None:
+                detected_shape, num_vertices, vertices = processor.detect_shape(largest_contour)
                 cv2.drawContours(frame, [largest_contour], -1, (0, 255, 0), 3)
-                cv2.circle(frame, center, 5, (0, 0, 255), -1)
+                cv2.circle(frame, center, 5, (0, 255, 255), -1)
+
+                # Draw the vertices on the frame
+                for vertex in vertices:
+                    cv2.circle(frame, tuple(vertex), 5, (255, 0, 0), -1)
+            else:
+                detected_shape = "unknown"
+                num_vertices = 0
+                vertices = []
 
 
-
+            cv2.putText(frame, f"Shape: {detected_shape}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            #raspta ekransiz calisirken bu satiri yorum satirina al yoksa error verir
             cv2.imshow("GTU KUZGUN", frame)
-
-            #cv2.imshow("Mask", mask)
-
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
 
     except Exception as e:
