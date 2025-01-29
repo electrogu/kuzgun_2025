@@ -1,0 +1,27 @@
+problemler:
+
+1. ayni anda iki sekil gorurse en buyuk alanlari olani sececek ama hangisi dogru olan?
+    • kare sekilerin boyutu biliniyor
+    hedefin tamaminin gozukmesini beklemek icin boyut bilgisi kullanilabilir ve 4 metre kareye en yakin alan secilebilir.
+    ayrica sabit yukselikte ucarak ekrandaki seklin alani oran oranti ile tespit edilebilir.
+
+2. hesaplamalarda en dogru yontem nedir?
+    • olabildigince ucaktan gercek verileri cekerek hesaplamalarda kullanmaliyiz
+    eski kodlarda hiz ve yukseklik ucaktan ogrenilerek yazildi
+
+3. hesaplamalarda zaman parametresi nasil tutulacak?
+    • her dongude baslangic ve bitis zamanlari cikarilarak her dongunun suresi tutulabilir
+    bu dongude 1 kare islenmis oluyor
+    sonraki dongude 1 kare onceki hedefin konumu bilinirse ve arada gecen zaman bilinirse 
+    yol ve zaman bilgisi elde edilebilir
+    boylece atis yapilabilir
+
+4. kameradan goruntu almak icin hangi kutuphane kullanilacak?
+    • picamera2
+
+5. ekranki hedefin hesaplanan hizi aslinda hedef ile ucagin bagil hizi oluyor yani oldugu gibi kullanabiliriz
+
+6. goruntu aktarimi nasil olacak?
+    • xbee telemetri ile aktarma mumkun mu?
+        • goruntu boyutu ve kare hizi ne olmali
+    • goruntu aktarim modulu almali miyiz??

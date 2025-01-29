@@ -1,6 +1,7 @@
 from camera_handler import CameraHandler
 from image_processor import ImageProcessor
 import cv2
+import time
 
 if __name__ == "__main__":
     # Define parameters
@@ -19,12 +20,31 @@ if __name__ == "__main__":
 
     try:
         while True:
+
+
             frame = camera.get_frame()
             mask = processor.process_frame(frame)
             largest_contour, area, center = processor.find_largest_contour(mask)
 
             if largest_contour is not None:
                 detected_shape, num_vertices, vertices = processor.detect_shape(largest_contour)
+                
+                velocity = 25 # m/s
+                altitude = 20 # m
+
+                # calcualte fall time
+                fall_time = ((2 * altitude) / g) ** 0.5 
+
+                fall_distance = velocity * fall_time
+
+                ##hesaplamalar
+
+                impact_coordinates = (360,540)
+
+                if center == impact_coordinates:
+                    #ates edildi
+                    pass
+                
                 cv2.drawContours(frame, [largest_contour], -1, (0, 255, 0), 3)
                 cv2.circle(frame, center, 5, (0, 255, 255), -1)
 
@@ -40,8 +60,14 @@ if __name__ == "__main__":
             cv2.putText(frame, f"Shape: {detected_shape}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             #raspta ekransiz calisirken bu satiri yorum satirina al yoksa error verir
             cv2.imshow("GTU KUZGUN", frame)
+            
+
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
+
+            
+
+
 
     except Exception as e:
         print(f"Error: {e}")
