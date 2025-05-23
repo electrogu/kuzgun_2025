@@ -1,27 +1,21 @@
 problemler:
 
 1. ayni anda iki sekil gorurse en buyuk alanlari olani sececek ama hangisi dogru olan?
-    â€¢ kare sekilerin boyutu biliniyor
-    hedefin tamaminin gozukmesini beklemek icin boyut bilgisi kullanilabilir ve 4 metre kareye en yakin alan secilebilir.
-    ayrica sabit yukselikte ucarak ekrandaki seklin alani oran oranti ile tespit edilebilir.
+    ? hedef kare sekilerin boyutu biliniyor
+    ? hedefin kare oladuðu teyit edilebilir: en/boy oraný ile
+    ? piksel görüntüden gerçek boyut hesaplama formülleri
 
 2. hesaplamalarda en dogru yontem nedir?
-    â€¢ olabildigince ucaktan gercek verileri cekerek hesaplamalarda kullanmaliyiz
-    eski kodlarda hiz ve yukseklik ucaktan ogrenilerek yazildi
+    ? olabildigince ucaktan gercek verileri canlý olarak çekilip kullýlmalý
+    ? eski kodlarda hiz ve yukseklik ucaktan ogrenilerek yazildi
 
-3. hesaplamalarda zaman parametresi nasil tutulacak?
-    â€¢ her dongude baslangic ve bitis zamanlari cikarilarak her dongunun suresi tutulabilir
-    bu dongude 1 kare islenmis oluyor
-    sonraki dongude 1 kare onceki hedefin konumu bilinirse ve arada gecen zaman bilinirse 
-    yol ve zaman bilgisi elde edilebilir
-    boylece atis yapilabilir
+3. atýþ þartlatý neler?
+    ? 
 
 4. kameradan goruntu almak icin hangi kutuphane kullanilacak?
-    â€¢ picamera2
+    ?  picamera2
 
 5. ekranki hedefin hesaplanan hizi aslinda hedef ile ucagin bagil hizi oluyor yani oldugu gibi kullanabiliriz
 
-6. goruntu aktarimi nasil olacak?
-    â€¢ xbee telemetri ile aktarma mumkun mu?
-        â€¢ goruntu boyutu ve kare hizi ne olmali
-    â€¢ goruntu aktarim modulu almali miyiz??
+6. iþlenmiþ görüntü aktarimi nasil olacak?
+    ? 
