@@ -40,7 +40,6 @@ class CameraHandler:
 
         elif self.use_picamera2:
             frame = self.picam2.capture_array()
-            cv2.imshow("Raspberry Kamera", frame)
             frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
             return frame_bgr
 
