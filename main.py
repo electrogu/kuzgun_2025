@@ -97,7 +97,7 @@ def main():
                 control = aspect_ratio >= 0.95 and aspect_ratio <= 1.05
                 drop = estimated_drop_point
                 print(estimated_drop_point, center, area, real_area, 5 >= real_area >= 3, control, num_vertices) # s?ras?yla ?u de?erlerin ??kt?s? (tahmini d??me noktas?, hedefin merkezi, pixel alan, ger?ek alan, ger?ek alan 3'ten b?y?k m??, kare mi?)
-                common_control = (drop[0] - 15, drop[1] - 15) <= center <= (drop[0] + 15, drop[1] + 15) and control and num_vertices == 4
+                common_control = (drop[0] - 15) <= center[0] <= (drop[0] + 15) and (drop[1] - 15) <= center <= (drop[1] + 15) and control and num_vertices == 4
                 if (common_control and (4.5 >= real_area >= 3.5 or 16.5 >= real_area >= 15.5)):
                     print("yuk birakildi")
                     pass
