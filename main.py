@@ -5,12 +5,24 @@ import math
 import numpy as np
 # Define parameters
 #            H    S    V
-lower_red = [0, 120, 70]
-upper_red = [10, 255, 255]
+
+# Lower red range (hue 0-10)
+lower_red1 = np.array([0, 120, 70])
+upper_red1 = np.array([10, 255, 255])
+
+# Upper red range (hue 170-180)
+lower_red2 = np.array([170, 120, 70])
+upper_red2 = np.array([180, 255, 255])
+
+#lower_red = [0, 120, 70]
+#upper_red = [10, 255, 255]
 # lower_red = [161, 155, 84]
 # upper_red = [179, 255, 255]
-lower_blue = [90, 50, 70]
-upper_blue = [128, 255, 255]
+
+#more accurate range
+lower_blue = np.array([100, 150, 50])
+upper_blue = np.array([130, 255, 255])
+
 resolution = (1280, 720)
 camera_index = 0
 g = 9.80665
@@ -32,7 +44,7 @@ focal_length = 0.00474 # m
 def main():
     # Initialize components
     camera = CameraHandler(camera_index=camera_index, resolution=resolution)
-    processor = ImageProcessor([(lower_red, upper_red), (lower_blue, upper_blue)]) # , (lower_blue, upper_blue)
+    processor = ImageProcessor([(lower_red1, upper_red1), (lower_red2, upper_red2), (lower_blue, upper_blue)]) # , (lower_blue, upper_blue)
 
     try:
         while True:
