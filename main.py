@@ -1,5 +1,4 @@
 from camera_handler import CameraHandler
-from picamera2 import Picamera2
 from image_processor import ImageProcessor
 import cv2
 import math
@@ -38,7 +37,7 @@ def main():
     try:
         while True:
 
-            frame = camera.capture_array()
+            frame = camera.get_frame()
             mask = processor.process_frame(frame)
             largest_contour, area, center = processor.find_largest_contour(mask)
             
