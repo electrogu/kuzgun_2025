@@ -3,10 +3,11 @@ from picamera2 import Picamera2
 import time
 
 class CameraHandler:
-    def __init__(self, camera_index=0, resolution=(1280, 720), image_path=None, use_picamera2=False):
+    def __init__(self, resolution=(1280, 720), image_path=None, use_picamera2=False, camera_index=0):
         self.resolution = resolution
         self.image_path = image_path
         self.use_picamera2 = use_picamera2
+        self.camera_index = camera_index
         self.cap = None
         self.picam2 = None
         self.frame = None
@@ -24,9 +25,10 @@ class CameraHandler:
             time.sleep(1)  # Kamera açýlmasý için bekle
 
         else:
-            self.cap = cv2.VideoCapture(0)
+            self.cap = cv2.VideoCapture(self.camera_index)
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, resolution[0])
             self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, resolution[1])
+
 
     def get_frame(self):
         if self.image_path:
