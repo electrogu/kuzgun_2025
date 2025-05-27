@@ -31,12 +31,12 @@ image_height = resolution[1] #480
 FOV_Y = 41  # Horizontal field of view (degrees)
 FOV_X = 66  # Horizontal field of view (degrees)
 camera_height = 10 # altitude  # Kamera yüksekliği (metre cinsinden)
-rotated_degree = 0
+rotated_degree = 10
 max_distance_back = camera_height * math.tan(math.radians(rotated_degree))  # Kameranın görebileceği maksimum mesafe (metre cinsinden)
 max_distance_front = camera_height * math.tan(math.radians(FOV_X-rotated_degree))  # Kameranın görebileceği maksimum mesafe (metre cinsinden)
 max_distance = max_distance_front + max_distance_back  #camera_height * math.tan(math.radians(FOV_X))  # Kameranın görebileceği maksimum mesafe (metre cinsinden)
 max_width = 2 * camera_height * math.tan(math.radians(FOV_Y/2))  # Kameranın görebileceği maksimum geni?lik (metre cinsinden)
-aircraft_position = ((image_width*(max_distance_back/(max_distance_back+max_distance_front))), image_height // 2)
+aircraft_position = ((image_width*(max_distance_back//(max_distance_back+max_distance_front))), image_height // 2)
 sensor_width = 0.00645 # m
 sensor_height = 0.00363 # m
 focal_length = 0.00474 # m
@@ -124,7 +124,8 @@ def main():
 
             cv2.putText(frame, f"Shape: {detected_shape}", (500, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 0, 0), 2)
             #raspta ekransiz calisirken bu satiri yorum satirina al yoksa error verir
-            cv2.imshow("GTU KUZGUN", frame)
+            frame_resized = cv2.resize(frame, resolution)
+            cv2.imshow("GTU KUZGUN", frame_resized)
             #cv2.imshow("GTU KUZGUN", mask)
             
 
