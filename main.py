@@ -110,6 +110,7 @@ def main():
             cv2.putText(frame, f"Shape: {detected_shape}", (500, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 0, 0), 2)
             #raspta ekransiz calisirken bu satiri yorum satirina al yoksa error verir
             cv2.imshow("GTU KUZGUN", frame)
+            cv2.imshow("GTU KUZGUN", mask)
             
 
             if cv2.waitKey(10) & 0xFF == ord('q'):
