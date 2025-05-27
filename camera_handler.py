@@ -3,7 +3,7 @@ from picamera2 import Picamera2
 import time
 
 class CameraHandler:
-    def __init__(self, resolution=(1280, 720), image_path=None, use_picamera2=False, camera_index=0):
+    def __init__(self, resolution=(1280, 720), image_path=None, use_picamera2=True, camera_index=0):
         self.resolution = resolution
         self.image_path = image_path
         self.use_picamera2 = use_picamera2
