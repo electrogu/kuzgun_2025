@@ -1,5 +1,6 @@
 from camera_handler import CameraHandler
 from image_processor import ImageProcessor
+from vehicle import Vehicle
 import cv2
 import math
 import numpy as np
@@ -143,8 +144,10 @@ def main():
 
 # Drone bilgilerini al
 def get_drone_info():
-    velocity = 20 # m/s
-    altitude = camera_height  # metre
+    # vehicle = Vehicle()
+    
+    velocity = 20 # vehicle.get_speed() # m/s
+    altitude = camera_height # vehicle.get_altitude() # metre
     return velocity, altitude
 
 # D???? noktas?n? hesapla

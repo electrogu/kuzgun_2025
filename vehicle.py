@@ -11,3 +11,6 @@ class Vehicle:
     
     def get_speed(self): #m/s
         return self.vehicle.groundspeed
+    
+    def get_gps(self): #m/s
+        return self.vehicle.location.global_frame
