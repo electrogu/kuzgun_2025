@@ -140,10 +140,10 @@ def main():
                 dx, dy = drop
                 cx, cy = center
                 print(estimated_drop_point, center, area, real_area, 5 >= real_area >= 3, control, num_vertices, target_color) # Added target_color to debug output
-                common_control = (dx - 15) <= cx <= (dx + 15) and (dy - 15) <= cy <= (dy + 15) and control and num_vertices == 4
+                common_control = (dx - 50) <= cx <= (dx + 50) and (dy - 50) <= cy <= (dy + 50) and control and num_vertices == 4
                 
                 # Drop logic based on target color
-                if (common_control and (4.5 >= real_area >= 3.5 or 16.5 >= real_area >= 15.5)):
+                if (common_control and (6 >= real_area >= 2 or 18 >= real_area >= 14)):
                     if target_color == "blue" and not red_payload_dropped:
                         print("Blue target detected - dropping RED payload (Servo 1)")
                         servo_controller.drop_payload_1()
@@ -230,17 +230,24 @@ def main():
                 red_target_hit = False
                 print("Servos reset - ready for next mission")
             elif cv2.waitKey(10) & 0xFF == ord('t'):  # Press 't' to test servos
+                print("Testing servos...")
                 servo_controller.test_servos()
             elif cv2.waitKey(10) & 0xFF == ord('1'):  # Press '1' to manually drop red payload
                 if not red_payload_dropped:
+                    print("Manual drop command: Red payload (Servo 1)")
                     servo_controller.drop_payload_1()
                     red_payload_dropped = True
-                    print("Manual drop: Red payload (Servo 1)")
+                    print("Manual drop: Red payload (Servo 1) - COMPLETE")
+                else:
+                    print("Red payload already dropped")
             elif cv2.waitKey(10) & 0xFF == ord('2'):  # Press '2' to manually drop blue payload
                 if not blue_payload_dropped:
+                    print("Manual drop command: Blue payload (Servo 2)")
                     servo_controller.drop_payload_2()
                     blue_payload_dropped = True
-                    print("Manual drop: Blue payload (Servo 2)")
+                    print("Manual drop: Blue payload (Servo 2) - COMPLETE")
+                else:
+                    print("Blue payload already dropped")
 
     except Exception as e:
         print(f"Error: {e}")

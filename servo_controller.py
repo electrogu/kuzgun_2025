@@ -71,26 +71,28 @@ class ServoController:
             angle (float): Target angle in degrees
         """
         if not self.is_initialized:
-            print("Servo controller not initialized")
+            print("❌ Servo controller not initialized")
             return
             
         try:
             duty_cycle = self.angle_to_duty_cycle(angle)
+            print(f"🎯 Setting servo to {angle}° (duty cycle: {duty_cycle:.2f}%)")
             pwm_instance.ChangeDutyCycle(duty_cycle)
-            time.sleep(0.1)  # Give servo time to move
+            time.sleep(0.5)  # Give servo more time to move
             pwm_instance.ChangeDutyCycle(0)  # Stop sending signal
+            print(f"✅ Servo movement complete")
             
         except Exception as e:
-            print(f"Error setting servo angle: {e}")
+            print(f"❌ Error setting servo angle: {e}")
     
     def drop_payload_1(self):
         """Drop RED payload from servo 1 (to blue target)"""
-        print("Dropping RED payload (Servo 1) to blue target...")
+        print("🔴 Dropping RED payload (Servo 1) to blue target...")
         self.set_servo_angle(self.servo1_pwm, self.open_angle)
         
     def drop_payload_2(self):
         """Drop BLUE payload from servo 2 (to red target)"""
-        print("Dropping BLUE payload (Servo 2) to red target...")
+        print("🔵 Dropping BLUE payload (Servo 2) to red target...")
         self.set_servo_angle(self.servo2_pwm, self.open_angle)
         
     def drop_both_payloads(self):
