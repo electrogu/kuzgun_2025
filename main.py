@@ -1,6 +1,6 @@
 from camera_handler import CameraHandler
 from image_processor import ImageProcessor
-from vehicle import Vehicle
+#from vehicle import Vehicle
 from servo_controller import ServoController
 import cv2
 import math
