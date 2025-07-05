@@ -17,11 +17,7 @@ class ServoController:
         
         # Servo angles
         self.closed_angle = 0    # Angle when payload is secured
-        self.open_angle = 180     # Angle when payload is released
-        
-        # Servo direction control (set to True if servo moves in reverse)
-        self.servo1_reversed = True   # Servo 1 is reversed
-        self.servo2_reversed = False  # Servo 2 is normal
+        self.open_angle = 90     # Angle when payload is released
         
         # Initialize GPIO
         self.setup_gpio()
@@ -42,8 +38,8 @@ class ServoController:
             self.servo2_pwm.start(0)
             
             # Set initial position (closed)
-            self.set_servo_angle(self.servo1_pwm, self.closed_angle, 1)
-            self.set_servo_angle(self.servo2_pwm, self.closed_angle, 2)
+            self.set_servo_angle(self.servo1_pwm, self.closed_angle)
+            self.set_servo_angle(self.servo2_pwm, self.closed_angle)
             
             self.is_initialized = True
             print("Servo controller initialized successfully")
@@ -66,48 +62,36 @@ class ServoController:
         duty_cycle = 2.5 + (angle / 180.0) * 10.0
         return duty_cycle
     
-    def set_servo_angle(self, pwm_instance, angle, servo_number=1):
+    def set_servo_angle(self, pwm_instance, angle):
         """
         Set servo to specific angle
         
         Args:
             pwm_instance: PWM instance for the servo
             angle (float): Target angle in degrees
-            servo_number (int): Servo number (1 or 2) for reverse handling
         """
         if not self.is_initialized:
-            print("❌ Servo controller not initialized")
+            print("Servo controller not initialized")
             return
             
         try:
-            # Apply reverse logic if needed
-            actual_angle = angle
-            if servo_number == 1 and self.servo1_reversed:
-                actual_angle = 180 - angle  # Reverse the angle
-                print(f"🔄 Servo 1 reversed: {angle}° → {actual_angle}°")
-            elif servo_number == 2 and self.servo2_reversed:
-                actual_angle = 180 - angle  # Reverse the angle
-                print(f"🔄 Servo 2 reversed: {angle}° → {actual_angle}°")
-            
-            duty_cycle = self.angle_to_duty_cycle(actual_angle)
-            print(f"🎯 Setting servo {servo_number} to {actual_angle}° (duty cycle: {duty_cycle:.2f}%)")
+            duty_cycle = self.angle_to_duty_cycle(angle)
             pwm_instance.ChangeDutyCycle(duty_cycle)
-            time.sleep(0.5)  # Give servo more time to move
+            time.sleep(0.1)  # Give servo time to move
             pwm_instance.ChangeDutyCycle(0)  # Stop sending signal
-            print(f"✅ Servo {servo_number} movement complete")
             
         except Exception as e:
-            print(f"❌ Error setting servo angle: {e}")
+            print(f"Error setting servo angle: {e}")
     
     def drop_payload_1(self):
         """Drop RED payload from servo 1 (to blue target)"""
-        print("🔴 Dropping RED payload (Servo 1) to blue target...")
-        self.set_servo_angle(self.servo1_pwm, self.open_angle, 1)
+        print("Dropping RED payload (Servo 1) to blue target...")
+        self.set_servo_angle(self.servo1_pwm, self.open_angle)
         
     def drop_payload_2(self):
         """Drop BLUE payload from servo 2 (to red target)"""
-        print("🔵 Dropping BLUE payload (Servo 2) to red target...")
-        self.set_servo_angle(self.servo2_pwm, self.open_angle, 2)
+        print("Dropping BLUE payload (Servo 2) to red target...")
+        self.set_servo_angle(self.servo2_pwm, self.open_angle)
         
     def drop_both_payloads(self):
         """Drop both payloads simultaneously"""
@@ -128,8 +112,8 @@ class ServoController:
     def reset_servos(self):
         """Reset both servos to closed position"""
         print("Resetting servos to closed position...")
-        self.set_servo_angle(self.servo1_pwm, self.closed_angle, 1)
-        self.set_servo_angle(self.servo2_pwm, self.closed_angle, 2)
+        self.set_servo_angle(self.servo1_pwm, self.closed_angle)
+        self.set_servo_angle(self.servo2_pwm, self.closed_angle)
         print("Servos reset to closed position")
     
     def test_servos(self):
@@ -142,16 +126,16 @@ class ServoController:
         
         # Test servo 1
         print("Testing servo 1...")
-        self.set_servo_angle(self.servo1_pwm, self.open_angle, 1)
+        self.set_servo_angle(self.servo1_pwm, self.open_angle)
         time.sleep(1)
-        self.set_servo_angle(self.servo1_pwm, self.closed_angle, 1)
+        self.set_servo_angle(self.servo1_pwm, self.closed_angle)
         time.sleep(1)
         
         # Test servo 2
         print("Testing servo 2...")
-        self.set_servo_angle(self.servo2_pwm, self.open_angle, 2)
+        self.set_servo_angle(self.servo2_pwm, self.open_angle)
         time.sleep(1)
-        self.set_servo_angle(self.servo2_pwm, self.closed_angle, 2)
+        self.set_servo_angle(self.servo2_pwm, self.closed_angle)
         time.sleep(1)
         
         print("Servo test completed")
