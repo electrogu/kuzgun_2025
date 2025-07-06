@@ -40,7 +40,7 @@ def main():
             
             if choice == '1':
                 print("Testing Servo 1...")
-                servo_controller.set_servo_angle(servo_controller.servo1_pwm, 90)
+                servo_controller.set_servo_angle(servo_controller.servo1_pwm, -90)
                 time.sleep(1)
                 servo_controller.set_servo_angle(servo_controller.servo1_pwm, 0)
                 print("Servo 1 test complete")

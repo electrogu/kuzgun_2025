@@ -86,7 +86,7 @@ class ServoController:
     def drop_payload_1(self):
         """Drop RED payload from servo 1 (to blue target)"""
         print("Dropping RED payload (Servo 1) to blue target...")
-        self.set_servo_angle(self.servo1_pwm, self.open_angle)
+        self.set_servo_angle(self.servo1_pwm, -self.open_angle)
         
     def drop_payload_2(self):
         """Drop BLUE payload from servo 2 (to red target)"""
