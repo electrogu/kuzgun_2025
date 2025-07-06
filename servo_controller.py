@@ -8,8 +8,8 @@ class ServoController:
         Initialize servo controller for two servos
         
         Args:
-            servo1_pin (int): GPIO pin for first servo - RED PAYLOAD (drops to blue targets)
-            servo2_pin (int): GPIO pin for second servo - BLUE PAYLOAD (drops to red targets)
+            servo1_pin (int): GPIO pin for first servo - RED PAYLOAD (drops to blue target)
+            servo2_pin (int): GPIO pin for second servo - BLUE PAYLOAD (drops to red target)
         """
         self.servo1_pin = servo1_pin
         self.servo2_pin = servo2_pin
@@ -34,7 +34,7 @@ class ServoController:
             self.servo2_pwm = GPIO.PWM(self.servo2_pin, 50)
             
             # Start PWM with 0% duty cycle
-            self.servo1_pwm.start(0)
+            self.servo1_pwm.start(90)
             self.servo2_pwm.start(0)
             
             # Set initial position (closed)
@@ -126,9 +126,9 @@ class ServoController:
         
         # Test servo 1
         print("Testing servo 1...")
-        self.set_servo_angle(self.servo1_pwm, self.open_angle)
+        self.set_servo_angle(self.servo1_pwm, self.open_angle-90)
         time.sleep(1)
-        self.set_servo_angle(self.servo1_pwm, self.closed_angle)
+        self.set_servo_angle(self.servo1_pwm, self.closed_angle+90)
         time.sleep(1)
         
         # Test servo 2

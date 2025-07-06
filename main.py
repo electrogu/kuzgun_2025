@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from camera_handler import CameraHandler
 from image_processor import ImageProcessor
 from vehicle import Vehicle
