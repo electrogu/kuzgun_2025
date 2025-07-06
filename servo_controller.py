@@ -112,7 +112,7 @@ class ServoController:
     def reset_servos(self):
         """Reset both servos to closed position"""
         print("Resetting servos to closed position...")
-        self.set_servo_angle(self.servo1_pwm, self.open_angle)
+        self.set_servo_angle(self.servo1_pwm, -self.open_angle)
         self.set_servo_angle(self.servo2_pwm, self.closed_angle)
         print("Servos reset to closed position")
     
