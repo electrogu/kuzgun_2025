@@ -64,6 +64,9 @@ def main():
     blue_target_hit = False
     red_target_hit = False
 
+    cv2.namedWindow("GTU KUZGUN", cv2.WND_PROP_FULLSCREEN)
+    cv2.setWindowProperty("GTU KUZGUN", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+
     try:
         while True:
 
@@ -217,8 +220,8 @@ def main():
             cv2.putText(frame, "Controls: Q=Quit, R=Reset, T=Test, 1=Drop Red, 2=Drop Blue", (10, 220), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1)
             
             #raspta ekransiz calisirken bu satiri yorum satirina al yoksa error verir
-            frame_resized = cv2.resize(frame, resolution)
-            cv2.imshow("GTU KUZGUN", frame_resized)
+            #frame_resized = cv2.resize(frame, resolution)
+            cv2.imshow("GTU KUZGUN", frame)
             #cv2.imshow("GTU KUZGUN", mask)
             
 
