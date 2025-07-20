@@ -1,4 +1,4 @@
-from dronekit import connect,Vehicle,LocationGlobalRelative
+from dronekit import connect
 
 class ehicle:
     def __init__(self, connection_string="/dev/ttyACM0", baud=57600):
