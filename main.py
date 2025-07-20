@@ -257,9 +257,9 @@ def get_drone_info():
 def calculate_drop_point(aircraft_position, velocity, altitude):
     time_to_fall = (2 * altitude / g) ** 0.5
     drop_distance = velocity * time_to_fall
-    if velocity is 0:
+    if velocity == 0:
         velocity = 2
-    if altitude is 0:
+    if altitude == 0:
         altitude = 2
     drop_x = int(aircraft_position[0] + drop_distance)
     drop_y = int(aircraft_position[1])
