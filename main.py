@@ -287,7 +287,7 @@ def calculate_distance(estimated_drop_point, target_position=None):
 # D???? noktas?n? g?ster
 def show_estimated_drop_point(frame, drop_x, drop_y):
     cv2.circle(frame, (drop_x, drop_y), 5, (0, 0, 255), -1)
-    cv2.circle(frame, (drop_x+15, drop_y+25), 5, (0, 0, 255), -1)
+    cv2.circle(frame, (drop_x+15, drop_y+40), 1, (0, 0, 255), -1)
     cv2.line(frame, (drop_x, 0), (drop_x, image_height), (0, 0, 255), 1)
     cv2.putText(frame, "Drop Point", (drop_x + 10, drop_y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 1, cv2.LINE_AA)
     
