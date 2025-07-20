@@ -247,10 +247,10 @@ def main():
 
 # Drone bilgilerini al
 def get_drone_info():
-    # vehicle = Vehicle()
+    vehicle = Vehicle()
     
-    velocity = Vehicle.get_speed(Vehicle) # 20 # m/s
-    altitude = Vehicle.get_altitude(Vehicle)# camera_height # metre
+    velocity = Vehicle.get_speed(vehicle) # 20 # m/s
+    altitude = Vehicle.get_altitude(vehicle)# camera_height # metre
     return velocity, altitude
 
 # D???? noktas?n? hesapla
