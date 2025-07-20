@@ -2,7 +2,7 @@
 
 from camera_handler import CameraHandler
 from image_processor import ImageProcessor
-from vehicle import ehicle
+from vehicle import Vehicle
 from servo_controller import ServoController
 import cv2
 import math
@@ -249,8 +249,8 @@ def main():
 def get_drone_info():
     # vehicle = Vehicle()
     
-    velocity = ehicle.get_speed() # 20 # m/s
-    altitude = ehicle.get_altitude()# camera_height # metre
+    velocity = Vehicle.get_speed(Vehicle) # 20 # m/s
+    altitude = Vehicle.get_altitude(Vehicle)# camera_height # metre
     return velocity, altitude
 
 # D???? noktas?n? hesapla
