@@ -140,7 +140,7 @@ def main():
                         cv2.putText(frame, f"Angles: {angle(pt1, pt2, pt3)}", (1000, 30+i*100), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 0, 0), 2)
                     is_square_angle = all(80 <= a <= 100 for a in angles)  # Allowing ?10? tolerance
                 """
-                control = aspect_ratio >= 0.95 and aspect_ratio <= 1.05
+                control = aspect_ratio >= 0.9 and aspect_ratio <= 1.1
                 drop = estimated_drop_point
                 dx, dy = drop
                 cx, cy = center
@@ -148,17 +148,15 @@ def main():
                 common_control = (dx - 15) <= cx <= (dx + 15) and (dy - 15) <= cy <= (dy + 15) and control and num_vertices == 4
                 
                 # Drop logic based on target color
-                if (common_control and (4.5 >= real_area >= 3.5 or 16.5 >= real_area >= 15.5)):
+                if (common_control and (5 >= real_area >= 3 or 18 >= real_area >= 14)):
                     if target_color == "blue" and not red_payload_dropped:
                         print("Blue target detected - dropping RED payload (Servo 1)")
                         servo_controller.drop_payload_1()
                         red_payload_dropped = True
-                        blue_target_hit = True
                     elif target_color == "red" and not blue_payload_dropped:
                         print("Red target detected - dropping BLUE payload (Servo 2)")
                         servo_controller.drop_payload_2()
                         blue_payload_dropped = True
-                        red_target_hit = True
                     elif target_color == "blue" and red_payload_dropped:
                         print("Blue target detected but red payload already dropped")
                     elif target_color == "red" and blue_payload_dropped:
@@ -207,18 +205,10 @@ def main():
             cv2.putText(frame, f"Red Payload (S1): {red_status}", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.6, red_color, 2)
             cv2.putText(frame, f"Blue Payload (S2): {blue_status}", (10, 115), cv2.FONT_HERSHEY_SIMPLEX, 0.6, blue_color, 2)
             
-            # Display target hit status
-            blue_target_status = "HIT" if blue_target_hit else "NOT HIT"
-            red_target_status = "HIT" if red_target_hit else "NOT HIT"
-            cv2.putText(frame, f"Blue Target: {blue_target_status}", (10, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
-            cv2.putText(frame, f"Red Target: {red_target_status}", (10, 160), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
-            
             # Mission completion status
             if red_payload_dropped and blue_payload_dropped:
                 cv2.putText(frame, "MISSION COMPLETE!", (10, 190), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 3)
-            
-            cv2.putText(frame, "Controls: Q=Quit, R=Reset, T=Test, 1=Drop Red, 2=Drop Blue", (10, 220), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1)
-            
+                        
             #raspta ekransiz calisirken bu satiri yorum satirina al yoksa error verir
             #frame_resized = cv2.resize(frame, resolution)
             cv2.imshow("GTU KUZGUN", frame)
@@ -297,8 +287,10 @@ def calculate_distance(estimated_drop_point, target_position=None):
 # D???? noktas?n? g?ster
 def show_estimated_drop_point(frame, drop_x, drop_y):
     cv2.circle(frame, (drop_x, drop_y), 5, (0, 0, 255), -1)
+    cv2.circle(frame, (drop_x+15, drop_y+15), 5, (0, 0, 255), -1)
     cv2.line(frame, (drop_x, 0), (drop_x, image_height), (0, 0, 255), 1)
     cv2.putText(frame, "Drop Point", (drop_x + 10, drop_y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 1, cv2.LINE_AA)
+    
 
 # U?u? verilerini ekrana yazd?r
 def display_flight_info(frame, altitude, velocity):
