@@ -1,7 +1,7 @@
 from dronekit import connect,Vehicle,LocationGlobalRelative
 
 class Vehicle:
-    def __init__(self, connection_string="/dev/ttyUSB0", baud=57600):
+    def __init__(self, connection_string="/dev/ttyACM0", baud=57600):
         self.vehicle = connect(connection_string, baud=baud, wait_ready=True)
         self.vehicle.wait_ready('autopilot_version')
         print(f"Connected to vehicle on: {connection_string}")
