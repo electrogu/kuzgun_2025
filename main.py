@@ -145,7 +145,7 @@ def main():
                 dx, dy = drop
                 cx, cy = center
                 print(estimated_drop_point, center, area, real_area, 5 >= real_area >= 3, control, num_vertices, target_color) # Added target_color to debug output
-                common_control = (dx - 15) <= cx <= (dx + 15) and (dy - 15) <= cy <= (dy + 15) and control and num_vertices == 4
+                common_control = (dx - 15) <= cx <= (dx + 15) and control and num_vertices == 4
                 
                 # Drop logic based on target color
                 if (common_control and (5 >= real_area >= 3 or 18 >= real_area >= 14)):
@@ -287,7 +287,6 @@ def calculate_distance(estimated_drop_point, target_position=None):
 # D???? noktas?n? g?ster
 def show_estimated_drop_point(frame, drop_x, drop_y):
     cv2.circle(frame, (drop_x, drop_y), 5, (0, 0, 255), -1)
-    cv2.circle(frame, (drop_x+15, drop_y+(350)), 1, (0, 0, 255), -1)
     cv2.line(frame, (drop_x, 0), (drop_x, image_height), (0, 0, 255), 1)
     cv2.putText(frame, "Drop Point", (drop_x + 10, drop_y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 1, cv2.LINE_AA)
     
