@@ -19,7 +19,7 @@ class ServoController:
         self.closed_angle = 0    # Angle when payload is secured
         self.open_angle = 90     # Angle when payload is released
         
-        # Initialize GPIO
+        # initialize gpio
         self.setup_gpio()
         
     def setup_gpio(self):
@@ -29,15 +29,14 @@ class ServoController:
             GPIO.setup(self.servo1_pin, GPIO.OUT)
             GPIO.setup(self.servo2_pin, GPIO.OUT)
             
-            # Create PWM instances (50Hz for servos)
+            # pwm instance (50Hz servo)
             self.servo1_pwm = GPIO.PWM(self.servo1_pin, 50)
             self.servo2_pwm = GPIO.PWM(self.servo2_pin, 50)
             
-            # Start PWM with 0% duty cycle
             self.servo1_pwm.start(90)
             self.servo2_pwm.start(0)
             
-            # Set initial position (closed)
+            # Set initial position (closed) # they are different because of the reversed positions on the plane
             self.set_servo_angle(self.servo1_pwm, self.open_angle)
             self.set_servo_angle(self.servo2_pwm, self.closed_angle)
             
@@ -51,10 +50,8 @@ class ServoController:
     def angle_to_duty_cycle(self, angle):
         """
         Convert angle to duty cycle for servo control
-        
         Args:
             angle (float): Angle in degrees (0-180)
-            
         Returns:
             float: Duty cycle percentage
         """
@@ -65,7 +62,6 @@ class ServoController:
     def set_servo_angle(self, pwm_instance, angle):
         """
         Set servo to specific angle
-        
         Args:
             pwm_instance: PWM instance for the servo
             angle (float): Target angle in degrees
