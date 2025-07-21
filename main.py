@@ -1,12 +1,24 @@
 #!/usr/bin/env python3
 
-from camera_handler import CameraHandler
 from image_processor import ImageProcessor
 from servo_controller import ServoController
 import cv2
 import math
 import numpy as np
 import os
+
+# Kamera handler için güvenli import
+try:
+    from camera_handler import CameraHandler
+    print("📷 Original camera handler loaded")
+except ImportError as e:
+    print(f"⚠️  Original camera handler import error: {e}")
+    try:
+        from camera_handler_safe import CameraHandler
+        print("📷 Safe camera handler loaded")
+    except ImportError:
+        print("❌ No camera handler available")
+        raise ImportError("Cannot import any camera handler")
 
 # Test modu için vehicle import'u
 TEST_MODE = True  # Bu değişkeni False yapın gerçek drone ile test ederken
@@ -273,28 +285,67 @@ def main():
         camera.release()
     
 
+# Global vehicle instance (bir kez oluştur)
+vehicle_instance = None
+
 # Drone bilgilerini al
 def get_drone_info():
-    vehicle = Vehicle()
+    global vehicle_instance
     
-    velocity = Vehicle.get_speed(vehicle) # 20 # m/s
-    altitude = Vehicle.get_altitude(vehicle)# camera_height # metre
-    return velocity, altitude
+    # Vehicle instance'ını sadece bir kez oluştur
+    if vehicle_instance is None:
+        try:
+            vehicle_instance = Vehicle()
+            if TEST_MODE:
+                print("🔧 Mock vehicle instance oluşturuldu")
+        except Exception as e:
+            print(f"❌ Vehicle oluşturulamadı: {e}")
+            # Fallback values
+            return 15.0, 20.0
+    
+    try:
+        velocity = vehicle_instance.get_speed()
+        altitude = vehicle_instance.get_altitude()
+        
+        # Güvenlik kontrolleri
+        if velocity is None or velocity < 0:
+            velocity = 15.0  # Default test velocity
+        if altitude is None or altitude < 0:
+            altitude = 20.0  # Default test altitude
+            
+        return velocity, altitude
+        
+    except Exception as e:
+        print(f"❌ Vehicle verisi alınamadı: {e}")
+        # Fallback values
+        return 15.0, 20.0
 
-# D???? noktas?n? hesapla
+# Düşüş noktasını hesapla
 def calculate_drop_point(aircraft_position, velocity, altitude):
+    # Sıfır değerleri için güvenlik kontrolü (hesaplamadan ÖNCE)
+    if velocity == 0 or velocity is None:
+        velocity = 2.0  # Minimum test hızı
+        print(f"⚠️  Velocity sıfır veya None - {velocity} m/s kullanılıyor")
+    
+    if altitude == 0 or altitude is None:
+        altitude = 2.0  # Minimum test yüksekliği  
+        print(f"⚠️  Altitude sıfır veya None - {altitude} m kullanılıyor")
+    
+    # Fizik hesaplamaları (düzeltilmiş değerlerle)
     time_to_fall = (2 * altitude / g) ** 0.5
     drop_distance = velocity * time_to_fall
-
-    # burası düzenlenecek !!!!!!!!!!
-    if velocity == 0:
-        velocity = 2
-    if altitude == 0:
-        altitude = 2
     
+    # Piksel koordinatlarına dönüştürme
+    # drop_distance'ı metre cinsinden piksel cinsine çevir
+    drop_distance_pixels = drop_distance * (image_width / max_distance)
     
-    drop_x = int(aircraft_position[0] + drop_distance)
+    drop_x = int(aircraft_position[0] + drop_distance_pixels)
     drop_y = int(aircraft_position[1])
+    
+    # Debug bilgisi (test modunda)
+    if TEST_MODE:
+        print(f"🎯 Drop Point: V={velocity:.1f}m/s, H={altitude:.1f}m, Fall_time={time_to_fall:.2f}s, Distance={drop_distance:.2f}m")
+    
     return (drop_x, drop_y)
 
 # Yükün şu an bırakılması durumunda düşeceği konumun hedefe uzaklığını hesaplama
