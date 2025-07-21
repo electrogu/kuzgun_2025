@@ -2,11 +2,21 @@
 
 from camera_handler import CameraHandler
 from image_processor import ImageProcessor
-from vehicle import Vehicle
 from servo_controller import ServoController
 import cv2
 import math
 import numpy as np
+import os
+
+# Test modu için vehicle import'u
+TEST_MODE = True  # Bu değişkeni False yapın gerçek drone ile test ederken
+
+if TEST_MODE:
+    from vehicle_mock import Vehicle
+    print("🔧 TEST MODE: Mock vehicle kullanılıyor")
+else:
+    from vehicle import Vehicle
+    print("🚁 PRODUCTION MODE: Gerçek vehicle kullanılıyor")
 
 #            H    S    V
 
@@ -54,11 +64,54 @@ focal_length = 0.00474 # m
 
 def main():
     # Initialize components
+    # Test görüntüsü kullanmak isterseniz aşağıdaki satırı uncomment edin ve image_path ekleyin
+    # camera = CameraHandler(image_path="images/square.jpg", resolution=resolution)
+    
+    # Gerçek kamera için:
     camera = CameraHandler(camera_index=camera_index, resolution=resolution)
+    
     processor = ImageProcessor([(lower_red1, upper_red1), (lower_red2, upper_red2), (lower_blue, upper_blue)]) # , (lower_blue, upper_blue)
     
-    # Initialize servo controller
-    servo_controller = ServoController(servo1_pin=18, servo2_pin=19)
+    # Initialize servo controller with safety check for Raspberry Pi
+    servo_controller = None
+    try:
+        if TEST_MODE:
+            # Mock servo controller for testing without RPi
+            class MockServoController:
+                def __init__(self):
+                    self.red_dropped = False
+                    self.blue_dropped = False
+                    print("🔧 Mock Servo Controller başlatıldı (RPi gerekmiyor)")
+                
+                def drop_payload_1(self):
+                    print("🔴 MOCK: Servo 1 - Kırmızı payload bırakıldı (mavi hedefe)")
+                    self.red_dropped = True
+                
+                def drop_payload_2(self):
+                    print("🔵 MOCK: Servo 2 - Mavi payload bırakıldı (kırmızı hedefe)")
+                    self.blue_dropped = True
+                
+                def reset_servos(self):
+                    print("🔄 MOCK: Servolar sıfırlandı")
+                    self.red_dropped = False
+                    self.blue_dropped = False
+                
+                def test_servos(self):
+                    print("🔧 MOCK: Servo testi simüle ediliyor...")
+                
+                def drop_both_payloads(self):
+                    print("🔄 MOCK: Her iki payload da bırakıldı")
+                    
+                def cleanup(self):
+                    print("🧹 Mock servo temizlendi")
+            
+            servo_controller = MockServoController()
+        else:
+            servo_controller = ServoController(servo1_pin=18, servo2_pin=19)
+    except Exception as e:
+        print(f"Servo controller başlatılamadı: {e}")
+        print("Mock servo controller kullanılıyor...")
+        servo_controller = MockServoController()
     
     # Variables for payload drop control
     red_payload_dropped = False    # Servo 1 - Red payload (drops to blue target) / this can change
