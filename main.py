@@ -142,7 +142,7 @@ def main():
                     elif target_color == "unknown":
                         print("Target color unknown - no payload drop")
                 
-                if ( (5.5 >= real_area >= 2.5 or 17.5 >= real_area >= 14.5) and num_vertices == 4): # hata payı +-1
+                if ( (4.5 >= real_area >= 3.5 or 16.5 >= real_area >= 15.5) and num_vertices == 4): # hata payı +-1
                     # Draw contour with color based on target type
                     if target_color == "red":
                         cv2.drawContours(frame, [largest_contour], -1, (0, 0, 255), 3)  # Red contour for red target
