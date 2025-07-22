@@ -126,7 +126,7 @@ def main():
                 common_control = (dx - 15) <= cx <= (dx + 15) and control and num_vertices == 4
                 
                 # Drop logic based on target color
-                if (common_control and (5 >= real_area >= 3 or 18 >= real_area >= 14)):
+                if (common_control and (4.5 >= real_area >= 3.5 or 16.5 >= real_area >= 14.5)):
                     if target_color == "blue" and not red_payload_dropped:
                         print("Blue target detected - dropping RED payload (Servo 1)")
                         servo_controller.drop_payload_1()
@@ -142,7 +142,7 @@ def main():
                     elif target_color == "unknown":
                         print("Target color unknown - no payload drop")
                 
-                if ( (5 >= real_area >= 3 or 15.5 >= real_area >= 14.5) and num_vertices == 4): # hata payı +-1
+                if ( (4.5 >= real_area >= 3.5 or 16.5 >= real_area >= 14.5) and num_vertices == 4): # hata payı +-1
                     # Draw contour with color based on target type
                     if target_color == "red":
                         cv2.drawContours(frame, [largest_contour], -1, (0, 0, 255), 3)  # Red contour for red target
