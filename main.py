@@ -261,8 +261,8 @@ def calculate_drop_point(aircraft_position, velocity, altitude):
     time_to_fall = math.sqrt(abs(2 * altitude / g))  # abs() ile negatif değerleri engelle
     drop_distance = velocity * time_to_fall
     
-    # Piksel cinsinden düşüş mesafesi
-    drop_pixel = image_width * (drop_distance / max_distance)
+    # Piksel cinsinden düşüş mesafesi - doğru formül
+    drop_pixel = (drop_distance / max_distance) * image_width
 
     # Güvenli int() dönüşümü
     try:
