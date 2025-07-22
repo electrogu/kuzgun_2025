@@ -56,6 +56,9 @@ focal_length = 0.00474 # m
 
 def main():
     # Initialize components
+
+    cv2.waitKey(5000)  # 5 saniye bekle
+
     vehicle = Vehicle()
     camera = CameraHandler(camera_index=camera_index, resolution=resolution)
     processor = ImageProcessor([(lower_red1, upper_red1), (lower_red2, upper_red2), (lower_blue, upper_blue)]) # , (lower_blue, upper_blue)
