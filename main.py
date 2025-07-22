@@ -64,7 +64,8 @@ def main():
     processor = ImageProcessor([(lower_red1, upper_red1), (lower_red2, upper_red2), (lower_blue, upper_blue)]) # , (lower_blue, upper_blue)
     
     # flip the camera if needed
-    camera.flip()
+    camera.flip_camera()
+    
     # Initialize servo controller
     ## sonra bu satırı açacağız
     servo_controller = ServoController(servo1_pin=18, servo2_pin=19)
