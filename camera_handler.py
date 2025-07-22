@@ -39,7 +39,7 @@ class CameraHandler:
             if self.frame is None:
                 raise Exception(f"Failed to load image from {self.image_path}")
             self.frame = cv2.resize(self.frame, self.resolution)
-            self.frame = cv2.flip(self.frame, 1)  # Yatayda çevir
+            #self.frame = cv2.flip(self.frame, 1)  # Yatayda çevir
             return self.frame
 
         elif self.use_picamera2:
