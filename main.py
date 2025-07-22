@@ -102,7 +102,7 @@ def main():
                 elif blue_pixels > red_pixels and blue_pixels > 100:
                     target_color = "blue"
             
-            velocity, altitude = get_drone_info()
+            velocity, altitude = get_drone_info(vehicle)
             display_flight_info(frame, altitude, velocity)
 
             estimated_drop_point = calculate_drop_point(aircraft_position, velocity, altitude)
@@ -225,10 +225,10 @@ def main():
     
 
 # Drone bilgilerini al
-def get_drone_info(Vehicle):
+def get_drone_info(vehicle_instance):
 
-    velocity = Vehicle.get_speed() # 20 # m/s
-    altitude = Vehicle.get_altitude()# camera_height # metre
+    velocity = vehicle_instance.get_speed() # 20 # m/s
+    altitude = vehicle_instance.get_altitude()# camera_height # metre
     return velocity, altitude
 
 # D???? noktas?n? hesapla
