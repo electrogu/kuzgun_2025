@@ -229,14 +229,9 @@ def main():
 
 # Drone bilgilerini al
 def get_drone_info(vehicle_instance):
-
-    velocity = vehicle_instance.get_speed() # 20 # m/s
-    altitude = vehicle_instance.get_altitude()# camera_height # metre
-    
-    
     try:
-        velocity = vehicle_instance.get_speed() # m/s
-        altitude = vehicle_instance.get_altitude() # metre
+        velocity = vehicle_instance.get_speed()  # m/s
+        altitude = vehicle_instance.get_altitude()  # metre
         
         # Eğer dronekit bağlı değilse veya veri alamıyorsak test değerleri kullan
         if velocity is None or velocity == 0:
@@ -250,25 +245,32 @@ def get_drone_info(vehicle_instance):
         velocity = 15  # Test için 15 m/s hız
         altitude = camera_height  # Test için varsayılan yükseklik
         
-        
     return velocity, altitude
 
-# D???? noktas?n? hesapla
+# Düşüş noktasını hesapla
 def calculate_drop_point(aircraft_position, velocity, altitude):
-    time_to_fall = (2 * altitude / g) ** 0.5
+    # Güvenlik kontrolleri - negatif veya sıfır değerleri düzelt
+    if velocity is None or velocity <= 0:
+        velocity = 2  # Minimum hız
+    if altitude is None or altitude <= 0:
+        altitude = 2  # Minimum yükseklik
+    
+    # Fizik hesaplaması - serbest düşüş süresi
+    time_to_fall = math.sqrt(abs(2 * altitude / g))  # abs() ile negatif değerleri engelle
     drop_distance = velocity * time_to_fall
+    
+    # Piksel cinsinden düşüş mesafesi
+    drop_pixel = image_width * (drop_distance / max_distance)
 
-    # burası düzenlenecek !!!!!!!!!!
-    if velocity == 0:
-        velocity = 2
-    if altitude == 0:
-        altitude = 2
-        
-    drop_pixel = image_width * (drop_distance / max_distance)  # piksel cinsinden düşüş mesafesi
-
-
-    drop_x = int(aircraft_position[0] + drop_pixel)
-    drop_y = int(aircraft_position[1])
+    # Güvenli int() dönüşümü
+    try:
+        drop_x = int(aircraft_position[0] + drop_pixel)
+        drop_y = int(aircraft_position[1])
+    except (ValueError, TypeError):
+        # Hata durumunda güvenli varsayılan değerler
+        drop_x = int(aircraft_position[0])
+        drop_y = int(aircraft_position[1])
+    
     return (drop_x, drop_y)
 
 # Yükün şu an bırakılması durumunda düşeceği konumun hedefe uzaklığını hesaplama
