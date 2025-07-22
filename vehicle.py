@@ -6,6 +6,7 @@ class Vehicle:
     # ardupilot bağlantısını kurar
     def __init__(self, connection_string="/dev/ttyACM0", baud=57600):
         self.vehicle = connect(connection_string, baud=baud, wait_ready=True)
+        print("Vehicle connected\n\n\n")
         self.vehicle.wait_ready('autopilot_version')
         print(f"Connected to vehicle on: {connection_string}")
 
