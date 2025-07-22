@@ -1,21 +1,13 @@
-kuzgun@raspberrypi:~/kuzgun_2025 $ python main.py 
-[0:01:17.738246834] [2223]  INFO Camera camera_manager.cpp:326 libcamera v0.5.0+59-d83ff0a4
-[0:01:17.848656162] [2229]  WARN RPiSdn sdn.cpp:40 Using legacy SDN tuning - please consider moving SDN inside rpi.denoise
-[0:01:17.850642919] [2229]  INFO RPI vc4.cpp:447 Registered camera /base/soc/i2c0mux/i2c@1/imx708@1a to Unicam device /dev/media4 and ISP device /dev/media0
-[0:01:17.850761221] [2229]  INFO RPI pipeline_base.cpp:1121 Using configuration file '/usr/share/libcamera/pipeline/rpi/vc4/rpi_apps.yaml'
-[0:01:17.858376790] [2223]  INFO Camera camera.cpp:1205 configuring streams: (0) 1280x720-XBGR8888 (1) 1536x864-SBGGR10_CSI2P
-[0:01:17.858827330] [2229]  INFO RPI vc4.cpp:622 Sensor: /base/soc/i2c0mux/i2c@1/imx708@1a - Selected sensor format: 1536x864-SBGGR10_1X10 - Selected unicam format: 1536x864-pBAA
+kuzgun@raspberrypi:~/kuzgun_2025 $ python  main.py 
+[0:05:41.336143326] [2466]  INFO Camera camera_manager.cpp:326 libcamera v0.5.0+59-d83ff0a4
+[0:05:41.448622020] [2472]  WARN RPiSdn sdn.cpp:40 Using legacy SDN tuning - please consider moving SDN inside rpi.denoise
+[0:05:41.450578348] [2472]  INFO RPI vc4.cpp:447 Registered camera /base/soc/i2c0mux/i2c@1/imx708@1a to Unicam device /dev/media4 and ISP device /dev/media0
+[0:05:41.450694586] [2472]  INFO RPI pipeline_base.cpp:1121 Using configuration file '/usr/share/libcamera/pipeline/rpi/vc4/rpi_apps.yaml'
+[0:05:41.458233091] [2466]  INFO Camera camera.cpp:1205 configuring streams: (0) 1280x720-XBGR8888 (1) 1536x864-SBGGR10_CSI2P
+[0:05:41.458681137] [2472]  INFO RPI vc4.cpp:622 Sensor: /base/soc/i2c0mux/i2c@1/imx708@1a - Selected sensor format: 1536x864-SBGGR10_1X10 - Selected unicam format: 1536x864-pBAA
 Servo controller not initialized
 Servo controller not initialized
 Servo controller initialized successfully
-ERROR:autopilot:EKF3 waiting for GPS config data
-ERROR:autopilot:EKF3 waiting for GPS config data
-ERROR:autopilot:EKF3 waiting for GPS config data
-CRITICAL:autopilot:PreArm: AHRS: EKF3 not started
-CRITICAL:autopilot:PreArm: Compass not healthy
-CRITICAL:autopilot:PreArm: AHRS: waiting for home
-CRITICAL:autopilot:PreArm: Logging failed
-CRITICAL:autopilot:PreArm: Waiting for RC
 ERROR:dronekit:Exception in message handler for HEARTBEAT
 Traceback (most recent call last):
   File "/home/kuzgun/.local/lib/python3.11/site-packages/dronekit/__init__.py", line 1531, in notify_message_listeners
@@ -30,6 +22,9 @@ Traceback (most recent call last):
   File "/home/kuzgun/.local/lib/python3.11/site-packages/dronekit/__init__.py", line 1223, in listener
     raise APIException("mode (%s, %s) not available on mavlink definition" % (m.custom_mode, m.base_mode))
 dronekit.APIException: mode (0, 4) not available on mavlink definition
+ERROR:autopilot:EKF3 waiting for GPS config data
+ERROR:autopilot:EKF3 waiting for GPS config data
+ERROR:autopilot:EKF3 waiting for GPS config data
 ERROR:dronekit:Exception in message handler for HEARTBEAT
 Traceback (most recent call last):
   File "/home/kuzgun/.local/lib/python3.11/site-packages/dronekit/__init__.py", line 1531, in notify_message_listeners
@@ -45,21 +40,7 @@ Traceback (most recent call last):
     raise APIException("mode (%s, %s) not available on mavlink definition" % (m.custom_mode, m.base_mode))
 dronekit.APIException: mode (0, 4) not available on mavlink definition
 Connected to vehicle on: /dev/ttyACM0
-(228, 360) (859, 332) 481499.5 1.4394749554024862 False False 3 red
-ERROR:dronekit:Exception in message handler for HEARTBEAT
-Traceback (most recent call last):
-  File "/home/kuzgun/.local/lib/python3.11/site-packages/dronekit/__init__.py", line 1531, in notify_message_listeners
-    fn(self, name, msg)
-  File "/home/kuzgun/.local/lib/python3.11/site-packages/dronekit/__init__.py", line 1223, in listener
-    raise APIException("mode (%s, %s) not available on mavlink definition" % (m.custom_mode, m.base_mode))
-dronekit.APIException: mode (0, 4) not available on mavlink definition
-ERROR:dronekit:Exception in message handler for HEARTBEAT
-Traceback (most recent call last):
-  File "/home/kuzgun/.local/lib/python3.11/site-packages/dronekit/__init__.py", line 1531, in notify_message_listeners
-    fn(self, name, msg)
-  File "/home/kuzgun/.local/lib/python3.11/site-packages/dronekit/__init__.py", line 1223, in listener
-    raise APIException("mode (%s, %s) not available on mavlink definition" % (m.custom_mode, m.base_mode))
-dronekit.APIException: mode (0, 4) not available on mavlink definition
+(228, 360) (816, 441) 7.0 1.6481543933029183e-05 False False 7 unknown
 Error: Timeout in initializing connection.
 Servo controller cleanup completed
 /home/kuzgun/kuzgun_2025/servo_controller.py:145: RuntimeWarning: No channels have been set up yet - nothing to clean up!  Try cleaning up at the end of your program instead!
