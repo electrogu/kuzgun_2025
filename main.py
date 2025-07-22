@@ -229,6 +229,25 @@ def get_drone_info(vehicle_instance):
 
     velocity = vehicle_instance.get_speed() # 20 # m/s
     altitude = vehicle_instance.get_altitude()# camera_height # metre
+    
+    
+    try:
+        velocity = vehicle_instance.get_speed() # m/s
+        altitude = vehicle_instance.get_altitude() # metre
+        
+        # Eğer dronekit bağlı değilse veya veri alamıyorsak test değerleri kullan
+        if velocity is None or velocity == 0:
+            velocity = 15  # Test için 15 m/s hız
+        if altitude is None or altitude == 0:
+            altitude = camera_height  # Test için varsayılan yükseklik
+            
+    except Exception as e:
+        print(f"Drone bağlantı hatası: {e}")
+        # Bağlantı hatası durumunda test değerleri
+        velocity = 15  # Test için 15 m/s hız
+        altitude = camera_height  # Test için varsayılan yükseklik
+        
+        
     return velocity, altitude
 
 # D???? noktas?n? hesapla
