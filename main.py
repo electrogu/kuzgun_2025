@@ -8,6 +8,8 @@ import cv2
 import math
 import numpy as np
 
+import vehicle
+
 #            H    S    V
 
 # Lower red range (hue 0-10)
@@ -54,6 +56,7 @@ focal_length = 0.00474 # m
 
 def main():
     # Initialize components
+    vehicle = Vehicle()
     camera = CameraHandler(camera_index=camera_index, resolution=resolution)
     processor = ImageProcessor([(lower_red1, upper_red1), (lower_red2, upper_red2), (lower_blue, upper_blue)]) # , (lower_blue, upper_blue)
     
@@ -222,11 +225,10 @@ def main():
     
 
 # Drone bilgilerini al
-def get_drone_info():
-    vehicle = Vehicle()
-    
-    velocity = Vehicle.get_speed(vehicle) # 20 # m/s
-    altitude = Vehicle.get_altitude(vehicle)# camera_height # metre
+def get_drone_info(Vehicle):
+
+    velocity = Vehicle.get_speed() # 20 # m/s
+    altitude = Vehicle.get_altitude()# camera_height # metre
     return velocity, altitude
 
 # D???? noktas?n? hesapla
