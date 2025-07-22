@@ -38,10 +38,10 @@ class ServoController:
             self.servo2_pwm.start(0) # servo2'yi %0 duty cycle ile başlat
             
             # Set initial position (closed) # they are different because of the reversed positions on the plane
+            self.is_initialized = True
             self.set_servo_angle(self.servo1_pwm, self.open_angle)
             self.set_servo_angle(self.servo2_pwm, self.closed_angle)
             
-            self.is_initialized = True
             print("Servo controller initialized successfully")
             
         except Exception as e:
