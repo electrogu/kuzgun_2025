@@ -266,7 +266,8 @@ def calculate_drop_point(aircraft_position, velocity, altitude):
 
     # Güvenli int() dönüşümü
     try:
-        drop_x = int(aircraft_position[0] + drop_pixel)
+        # bişey olursa drop pixeli ekle
+        drop_x = int(aircraft_position[0] - drop_pixel)  # Düşüş noktası geride olmalı (sol taraf)
         drop_y = int(aircraft_position[1])
     except (ValueError, TypeError):
         # Hata durumunda güvenli varsayılan değerler
