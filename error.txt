@@ -1,0 +1,15 @@
+kuzgun@raspberrypi:~/kuzgun_2025 $ python main.py 
+[0:38:08.884659770] [3948]  INFO Camera camera_manager.cpp:326 libcamera v0.5.0+59-d83ff0a4
+[0:38:08.996652114] [3954]  WARN RPiSdn sdn.cpp:40 Using legacy SDN tuning - please consider moving SDN inside rpi.denoise
+[0:38:08.998591423] [3954]  INFO RPI vc4.cpp:447 Registered camera /base/soc/i2c0mux/i2c@1/imx708@1a to Unicam device /dev/media4 and ISP device /dev/media0
+[0:38:08.998707708] [3954]  INFO RPI pipeline_base.cpp:1121 Using configuration file '/usr/share/libcamera/pipeline/rpi/vc4/rpi_apps.yaml'
+[0:38:09.005661921] [3948]  INFO Camera camera.cpp:1205 configuring streams: (0) 1280x720-XBGR8888 (1) 1536x864-SBGGR10_CSI2P
+[0:38:09.006120769] [3954]  INFO RPI vc4.cpp:622 Sensor: /base/soc/i2c0mux/i2c@1/imx708@1a - Selected sensor format: 1536x864-SBGGR10_1X10 - Selected unicam format: 1536x864-pBAA
+Servo controller not initialized
+Servo controller not initialized
+Servo controller initialized successfully
+Error: [Errno 2] could not open port /dev/ttyACM0: [Errno 2] No such file or directory: '/dev/ttyACM0'
+Servo controller cleanup completed
+/home/kuzgun/kuzgun_2025/servo_controller.py:145: RuntimeWarning: No channels have been set up yet - nothing to clean up!  Try cleaning up at the end of your program instead!
+  GPIO.cleanup()
+Servo controller cleanup completed
