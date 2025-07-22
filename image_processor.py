@@ -1,10 +1,13 @@
 import cv2
 import numpy as np
 
+# belirli renkteki hedeflerin tespipt ve şekil analizi yapılıre
 class ImageProcessor:
+    # tespit edilecek renklerin hsv aralıkları
     def __init__(self, color_ranges):
         self.color_ranges = [(np.array(lower), np.array(upper)) for lower, upper in color_ranges]
 
+    # frame'i işleyerek renk maskesi oluşturur
     def process_frame(self, frame):
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         mask = np.zeros(hsv.shape[:2], dtype="uint8")
@@ -14,6 +17,7 @@ class ImageProcessor:
         
         return mask
 
+    # en büyük nesneyi bulur
     def find_largest_contour(self, mask):
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -22,9 +26,11 @@ class ImageProcessor:
             area = cv2.contourArea(largest_contour)
             center = self.__get_center_of_contour(largest_contour)
 
-            return largest_contour, area, center
+            return largest_contour, area, center # kontur, alan, merkez döner
         return None, 0, (0, 0)
     
+    # şekil tanıma
+    # köşe sayısına göre şekli belirler
     def detect_shape(self, contour):
         # Approximate the contour
         epsilon = 0.04 * cv2.arcLength(contour, True)
@@ -48,6 +54,7 @@ class ImageProcessor:
         
         return shape, num_vertices, vertices
 
+    # nesnenin merkez koordinatlarını hesaplar
     def __get_center_of_contour(self, contour):
         M = cv2.moments(contour)
         if M["m00"] != 0:

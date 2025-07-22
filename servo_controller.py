@@ -26,15 +26,16 @@ class ServoController:
         """Setup GPIO pins and PWM for servos"""
         try:
             GPIO.setmode(GPIO.BCM)
-            GPIO.setup(self.servo1_pin, GPIO.OUT)
-            GPIO.setup(self.servo2_pin, GPIO.OUT)
+            GPIO.setup(self.servo1_pin, GPIO.OUT) # pin 18'i çıkış olarak ayarla
+            GPIO.setup(self.servo2_pin, GPIO.OUT) # pin 19'u çıkış yap
             
             # pwm instance (50Hz servo)
-            self.servo1_pwm = GPIO.PWM(self.servo1_pin, 50)
-            self.servo2_pwm = GPIO.PWM(self.servo2_pin, 50)
+            # frekansları 50 Hz olarak ayarla
+            self.servo1_pwm = GPIO.PWM(self.servo1_pin, 50) 
+            self.servo2_pwm = GPIO.PWM(self.servo2_pin, 50) 
             
-            self.servo1_pwm.start(90)
-            self.servo2_pwm.start(0)
+            self.servo1_pwm.start(90) # servo1'i %90 duty cycle ile başlat
+            self.servo2_pwm.start(0) # servo2'yi %0 duty cycle ile başlat
             
             # Set initial position (closed) # they are different because of the reversed positions on the plane
             self.set_servo_angle(self.servo1_pwm, self.open_angle)
@@ -59,6 +60,7 @@ class ServoController:
         duty_cycle = 2.5 + (angle / 180.0) * 10.0
         return duty_cycle
     
+    # servo motorunu belirtilen açıya hareket ettir.
     def set_servo_angle(self, pwm_instance, angle):
         """
         Set servo to specific angle
@@ -71,10 +73,10 @@ class ServoController:
             return
             
         try:
-            duty_cycle = self.angle_to_duty_cycle(angle)
-            pwm_instance.ChangeDutyCycle(duty_cycle)
-            time.sleep(0.1)  # Give servo time to move
-            pwm_instance.ChangeDutyCycle(0)  # Stop sending signal
+            duty_cycle = self.angle_to_duty_cycle(angle) # İstenen açıyı (0-180°) PWM duty cycle yüzdesine çevirir.
+            pwm_instance.ChangeDutyCycle(duty_cycle) # hesaplanan duty cycle ile PWM sinyalini servo motora gönderir
+            time.sleep(0.1)  # Give servo time to move. Pozisyona gitmesi için 100ms bekle
+            pwm_instance.ChangeDutyCycle(0)  # PWM sinyalini durdur. (servo poizyonda kalır)
             
         except Exception as e:
             print(f"Error setting servo angle: {e}")

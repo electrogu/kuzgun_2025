@@ -2,7 +2,9 @@ import cv2
 from picamera2 import Picamera2
 import time
 
+# farklı kamera kaynaklarını tek bir arayüzle yönetmemizi sağlıyor
 class CameraHandler:
+    # kamera kaynaklarını başlatır
     def __init__(self, resolution=(1280, 720), image_path=None, use_picamera2=True, camera_index=0):
         self.resolution = resolution
         self.image_path = image_path
@@ -22,7 +24,7 @@ class CameraHandler:
             self.picam2 = Picamera2()
             self.picam2.configure(self.picam2.create_preview_configuration(main={"size": resolution}))
             self.picam2.start()
-            time.sleep(1)  # Kamera a��lmas� i�in bekle
+            time.sleep(1)  # Kamera a��lmas� i�in bekle
 
         else:
             self.cap = cv2.VideoCapture(self.camera_index)
@@ -30,6 +32,7 @@ class CameraHandler:
             self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, resolution[1])
 
 
+    # aktif olan kamera kaynağından frame alır
     def get_frame(self):
         if self.image_path:
             self.frame = cv2.imread(self.image_path)
@@ -49,6 +52,7 @@ class CameraHandler:
                 raise Exception("Failed to capture frame from camera.")
             return frame
 
+    # kamera kaynaklarını kapatıyoruz
     def release(self):
         if self.cap:
             self.cap.release()
