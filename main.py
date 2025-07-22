@@ -263,9 +263,11 @@ def calculate_drop_point(aircraft_position, velocity, altitude):
         velocity = 2
     if altitude == 0:
         altitude = 2
-    
-    
-    drop_x = int(aircraft_position[0] + drop_distance)
+        
+    drop_pixel = image_width * (drop_distance / max_distance)  # piksel cinsinden düşüş mesafesi
+
+
+    drop_x = int(aircraft_position[0] + drop_pixel)
     drop_y = int(aircraft_position[1])
     return (drop_x, drop_y)
 
