@@ -153,7 +153,7 @@ def main():
                     if target_color == "blue" and (16.5 >= real_area >= 14):
                         cv2.drawContours(frame, [largest_contour], -1, (0, 0, 255), 3)  # red contour for blue target
                         cv2.putText(frame, "BLUE TARGET", (center[0]-50, center[1]-30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
-                    if target_color == "red" and (7 >= real_area >= 5):
+                    if target_color == "red" and (5 >= real_area >= 3):
                         cv2.drawContours(frame, [largest_contour], -1, (255, 0, 0), 3)  # blue contour for red target
                         cv2.putText(frame, "RED TARGET", (center[0]-50, center[1]-30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
                     else:
