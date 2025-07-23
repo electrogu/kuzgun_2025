@@ -236,7 +236,7 @@ def calculate_drop_point(aircraft_position, velocity, altitude):
     if altitude == 0:
         altitude = 2
         
-    time_to_fall = (2 * altitude / g) ** 0.5
+    time_to_fall = abs((2 * altitude / g)) ** 0.5
     drop_distance = velocity * time_to_fall
     
     drop_x = int(aircraft_position[0] + drop_distance)
