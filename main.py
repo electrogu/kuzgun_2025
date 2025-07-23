@@ -148,23 +148,33 @@ def main():
                     elif target_color == "unknown":
                         print("Target color unknown - no payload drop")
                 
-                if ( (5 >= real_area >= 3 or 16.5 >= real_area >= 14) and num_vertices == 4): # hata payı +-1
-                    # Draw contour with color based on target type
-                    if target_color == "red":
-                        cv2.drawContours(frame, [largest_contour], -1, (255, 0, 0), 3)  # blue contour for red target
-                        cv2.putText(frame, "RED TARGET", (center[0]-50, center[1]-30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-                    elif target_color == "blue":
-                        cv2.drawContours(frame, [largest_contour], -1, (0, 0, 255), 3)  # red contour for blue target
-                        cv2.putText(frame, "BLUE TARGET", (center[0]-50, center[1]-30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
-                    else:
-                        cv2.drawContours(frame, [largest_contour], -1, (0, 255, 0), 2)  # Green contour for unknown
+                # if ( (5 >= real_area >= 3 or 16.5 >= real_area >= 14) and num_vertices == 4): # hata payı +-1
+                #     # Draw contour with color based on target type
+                #     if target_color == "red":
+                #         cv2.drawContours(frame, [largest_contour], -1, (255, 0, 0), 3)  # blue contour for red target
+                #         cv2.putText(frame, "RED TARGET", (center[0]-50, center[1]-30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                #     elif target_color == "blue":
+                #         cv2.drawContours(frame, [largest_contour], -1, (0, 0, 255), 3)  # red contour for blue target
+                #         cv2.putText(frame, "BLUE TARGET", (center[0]-50, center[1]-30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
+                #     else:
+                #         cv2.drawContours(frame, [largest_contour], -1, (0, 255, 0), 2)  # Green contour for unknown
                         
-                    cv2.circle(frame, center, 5, (0, 255, 255), -1)
-                    # Draw the vertices on the frame
-                    for vertex in vertices:
-                        cv2.circle(frame, tuple(vertex), 5, (255, 255, 255), -1)
-
+                #     cv2.circle(frame, center, 5, (0, 255, 255), -1)
+                #     # Draw the vertices on the frame
+                #     for vertex in vertices:
+                #         cv2.circle(frame, tuple(vertex), 5, (255, 255, 255), -1)
                 
+                if (target_color == "blue" and (16.5 >= real_area >= 14) and num_vertices == 4):
+                    cv2.drawContours(frame, [largest_contour], -1, (0, 0, 255), 3)  # red contour for blue target
+                    cv2.putText(frame, "BLUE TARGET", (center[0]-50, center[1]-30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
+                    
+                if (target_color == "red" and (16.5 >= real_area >= 14) and num_vertices == 4):
+                    cv2.drawContours(frame, [largest_contour], -1, (255, 0, 0), 3)  # blue contour for red target
+                    cv2.putText(frame, "RED TARGET", (center[0]-50, center[1]-30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                
+                cv2.circle(frame, center, 5, (0, 255, 255), -1)
+                for vertex in vertices:
+                    cv2.circle(frame, tuple(vertex), 5, (255, 255, 255), -1)
 
                 # Düşüş noktası ve hedef arasındaki mesafeyi hesapla
                 distance = calculate_distance(estimated_drop_point, center)
