@@ -8,315 +8,220 @@ import cv2
 import math
 import numpy as np
 
-import vehicle
-
-#            H    S    V
-
-# Lower red range (hue 0-10)
+# HSV Color ranges
 lower_red1 = np.array([0, 120, 70])
 upper_red1 = np.array([10, 255, 255])
-
-# Upper red range (hue 170-180)
 lower_red2 = np.array([170, 120, 70])
 upper_red2 = np.array([180, 255, 255])
-
-#lower_red = [0, 120, 70]
-#upper_red = [10, 255, 255]
-# lower_red = [161, 155, 84]
-# upper_red = [179, 255, 255]
-
-#more accurate range
 lower_blue = np.array([100, 150, 50])
 upper_blue = np.array([130, 255, 255])
 
+# Camera and flight parameters
 resolution = (1280, 720)
 camera_index = 0
 g = 9.80665
-image_width = resolution[0] #640  # Kamera çözünürlüğü (piksel cinsinden)
-image_height = resolution[1] #480
-FOV_Y = 41  # Horizontal field of view (degrees)
+image_width, image_height = resolution
+FOV_Y = 41  # Vertical field of view (degrees)
 FOV_X = 66  # Horizontal field of view (degrees)
-camera_height = 10 # altitude  # Kamera yüksekliği (metre cinsinden)
+camera_height = 10  # Initial altitude (meters)
 rotated_degree = 15
-max_distance_back = camera_height * math.tan(math.radians(rotated_degree))  # Kameranın görebileceği maksimum mesafe, kamera hizasında arka taraf (metre cinsinden)
-max_distance_front = camera_height * math.tan(math.radians(FOV_X-rotated_degree))  # Kameranın görebileceği maksimum mesafe, kamera hizasında ön taraf (metre cinsinden)
-max_distance = max_distance_front + max_distance_back  #camera_height * math.tan(math.radians(FOV_X))  # Kameranın görebileceği maksimum mesafe, toplam (metre cinsinden)
-max_width = 2 * camera_height * math.tan(math.radians(FOV_Y/2))  # Kameranın görebileceği maksimum genişlik (metre cinsinden)
-aircraft_position = ((image_width*(max_distance_back/(max_distance_back+max_distance_front))), image_height // 2) # uçak konumu
 
-# doküman bilgileri
-sensor_width = 0.00645 # m
-sensor_height = 0.00363 # m
-focal_length = 0.00474 # m
+# Calculate max distances
+max_distance_back = camera_height * math.tan(math.radians(rotated_degree))
+max_distance_front = camera_height * math.tan(math.radians(FOV_X - rotated_degree))
+max_distance = max_distance_front + max_distance_back
+max_width = 2 * camera_height * math.tan(math.radians(FOV_Y/2))
+aircraft_position = ((image_width*(max_distance_back/(max_distance_back+max_distance_front))), image_height // 2)
 
-# hesaplamalar, formüller
-# (x) gsd = (sensor_width * altitude) / (image_width * focal_length)
-# (y) gsd = (sensor_height * altitude) / (image_height * focal_length)
-# real_area = (gsd_x * gsd_y) * contour_area
+# Camera sensor specifications
+sensor_width = 0.00645  # m
+sensor_height = 0.00363  # m
+focal_length = 0.00474  # m
 
 def main():
     # Initialize components
-
-    cv2.waitKey(5000)  # 5 saniye bekle
-
     vehicle = Vehicle()
     camera = CameraHandler(camera_index=camera_index, resolution=resolution)
-    processor = ImageProcessor([(lower_red1, upper_red1), (lower_red2, upper_red2), (lower_blue, upper_blue)]) # , (lower_blue, upper_blue)
-    
-   
-    
-    # Initialize servo controller
-    ## sonra bu satırı açacağız
+    processor = ImageProcessor([(lower_red1, upper_red1), (lower_red2, upper_red2), (lower_blue, upper_blue)])
     servo_controller = ServoController(servo1_pin=18, servo2_pin=19)
     
-    # Variables for payload drop control
-    red_payload_dropped = False    # Servo 1 - Red payload (drops to blue target) / this can change
-    blue_payload_dropped = False   # Servo 2 - Blue payload (drops to red target) / this can change
+    # Payload status
+    red_payload_dropped = False
+    blue_payload_dropped = False
 
     cv2.namedWindow("GTU KUZGUN", cv2.WND_PROP_FULLSCREEN)
     cv2.setWindowProperty("GTU KUZGUN", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
     try:
         while True:
-
             frame = camera.get_frame()
+            if frame is None:
+                print("Failed to get frame from camera")
+                break
+                
             mask = processor.process_frame(frame)
             largest_contour, area, center = processor.find_largest_contour(mask)
             
-            # Detect target color separately for each color range
-            red_mask1 = cv2.inRange(cv2.cvtColor(frame, cv2.COLOR_BGR2HSV), lower_red1, upper_red1)
-            red_mask2 = cv2.inRange(cv2.cvtColor(frame, cv2.COLOR_BGR2HSV), lower_red2, upper_red2)
+            # Color detection
+            hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+            red_mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
+            red_mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
             red_mask = cv2.bitwise_or(red_mask1, red_mask2)
-            blue_mask = cv2.inRange(cv2.cvtColor(frame, cv2.COLOR_BGR2HSV), lower_blue, upper_blue)
-                        
-            # Determine which color target we're currently detecting
+            blue_mask = cv2.inRange(hsv, lower_blue, upper_blue)
+            
+            # Determine target color
             target_color = "unknown"
             if largest_contour is not None:
-                # Check if the largest contour belongs to red or blue
                 contour_mask = np.zeros(frame.shape[:2], dtype=np.uint8)
-                cv2.fillPoly(contour_mask, [largest_contour], 255)
+                cv2.drawContours(contour_mask, [largest_contour], -1, 255, -1)
                 
-                red_overlap = cv2.bitwise_and(contour_mask, red_mask)
-                blue_overlap = cv2.bitwise_and(contour_mask, blue_mask)
+                red_pixels = cv2.countNonZero(cv2.bitwise_and(contour_mask, red_mask))
+                blue_pixels = cv2.countNonZero(cv2.bitwise_and(contour_mask, blue_mask))
                 
-                red_pixels = cv2.countNonZero(red_overlap)
-                blue_pixels = cv2.countNonZero(blue_overlap)
-                
-                if red_pixels > blue_pixels and red_pixels > 100:  # Minimum pixel threshold
+                if red_pixels > blue_pixels and red_pixels > 100:
                     target_color = "red"
                 elif blue_pixels > red_pixels and blue_pixels > 100:
                     target_color = "blue"
             
+            # Get drone info and calculate GSD
             velocity, altitude = get_drone_info(vehicle)
+            if altitude <= 0:
+                altitude = 10  # Default safe altitude
+                
+            gsd_x = (altitude * sensor_width) / (image_width * focal_length)
+            gsd_y = (altitude * sensor_height) / (image_height * focal_length)
+            real_area = (gsd_x * gsd_y) * area if area > 0 else 0
+            
+            # Display flight info
             display_flight_info(frame, altitude, velocity)
-
             estimated_drop_point = calculate_drop_point(aircraft_position, velocity, altitude)
             show_estimated_drop_point(frame, estimated_drop_point[0], estimated_drop_point[1])
 
-            gsd_x = (altitude * sensor_width) / (image_width * focal_length) #gsd değerini x için hesaplıyoruz
-            gsd_y = (altitude * sensor_height) / (image_height * focal_length)  #gsd değerini y için hesaplıyoruz
-            real_area = (gsd_x * gsd_y) * area # hesapladığımız gsd değerlerini ve ekrandaki pixel alanı çarparak gerçek alanı buluyoruz (yaklaşık olarak)
-            print(f"DEBUG: altitude={altitude}, area(pixels)={area}, gsd_x={gsd_x:.6f}, gsd_y={gsd_y:.6f}, real_area={real_area:.6f}")
-            
             if largest_contour is not None:
-                
+                # Shape detection
                 detected_shape, num_vertices, vertices = processor.detect_shape(largest_contour)
                 x, y, w, h = cv2.boundingRect(largest_contour)
-                aspect_ratio = float(w/h) # elde ettiğimiz karenin yükseklik ve genişliğini oranlayarak alttaki satırda kare olup olmadığını kontrol ediyoruz yaklaşık olarak
+                aspect_ratio = float(w)/h
                 
-                control = aspect_ratio >= 0.9 and aspect_ratio <= 1.1
-                drop = estimated_drop_point
-                dx, dy = drop
+                # Position and shape controls
+                control = 0.9 <= aspect_ratio <= 1.1
+                dx, dy = estimated_drop_point
                 cx, cy = center
-                print(estimated_drop_point, center, area, real_area, 5 >= real_area >= 3, control, num_vertices, target_color) # Added target_color to debug output
                 common_control = (dx - 15) <= cx <= (dx + 15) and control and num_vertices == 4
                 
-                # Drop logic based on target color and specific area requirements
-                if target_color == "red" and common_control and (4.5 >= real_area >= 3.5):
-                    if not blue_payload_dropped:
-                        print("Red target detected - dropping BLUE payload (Servo 2)")
+                # Debug output
+                print(f"Target: {target_color}, Area: {real_area:.2f}, Vertices: {num_vertices}, Center: {center}, Drop Point: {estimated_drop_point}")
+                
+                # Draw contours based on target type and area
+                if target_color == "red" and (4.5 >= real_area >= 3.5):
+                    cv2.drawContours(frame, [largest_contour], -1, (0, 0, 255), 3)
+                    cv2.putText(frame, "RED TARGET", (center[0]-50, center[1]-30), 
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+                    if common_control and not blue_payload_dropped:
+                        print("Red target detected - dropping BLUE payload")
                         servo_controller.drop_payload_2()
                         blue_payload_dropped = True
-                    else:
-                        print("Red target detected but blue payload already dropped")
-                elif target_color == "blue" and common_control and (16.5 >= real_area >= 14.5):
-                    if not red_payload_dropped:
-                        print("Blue target detected - dropping RED payload (Servo 1)")
+                        
+                elif target_color == "blue" and (16.5 >= real_area >= 14.5):
+                    cv2.drawContours(frame, [largest_contour], -1, (255, 0, 0), 3)
+                    cv2.putText(frame, "BLUE TARGET", (center[0]-50, center[1]-30), 
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
+                    if common_control and not red_payload_dropped:
+                        print("Blue target detected - dropping RED payload")
                         servo_controller.drop_payload_1()
                         red_payload_dropped = True
-                    else:
-                        print("Blue target detected but red payload already dropped")
                 
-                # Visual feedback - draw contours based on target detection with correct area
-                if target_color == "red":  # Sadece renk kontrolü
-                    print(f"RED: real_area={real_area}, num_vertices={num_vertices}")
-                    cv2.drawContours(frame, [largest_contour], -1, (0, 0, 255), 3)  # Red contour for red target
-                    cv2.putText(frame, "RED TARGET", (center[0]-50, center[1]-30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-                    cv2.circle(frame, center, 5, (0, 255, 255), -1)
-                    # Draw the vertices on the frame
-                    for vertex in vertices:
-                        cv2.circle(frame, tuple(vertex), 5, (255, 255, 255), -1)
-                elif target_color == "blue":  # Sadece renk kontrolü
-                    print(f"BLUE: real_area={real_area}, num_vertices={num_vertices}")
-                    cv2.drawContours(frame, [largest_contour], -1, (255, 0, 0), 3)  # Blue contour for blue target
-                    cv2.putText(frame, "BLUE TARGET", (center[0]-50, center[1]-30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
-                    cv2.circle(frame, center, 5, (0, 255, 255), -1)
-                    # Draw the vertices on the frame
-                    for vertex in vertices:
-                        cv2.circle(frame, tuple(vertex), 5, (255, 255, 255), -1)
+                # Always draw center and vertices for detected contours
+                cv2.circle(frame, center, 5, (0, 255, 255), -1)
+                for vertex in vertices:
+                    cv2.circle(frame, tuple(vertex), 5, (255, 255, 255), -1)
                 
-
-                # Düşüş noktası ve hedef arasındaki mesafeyi hesapla
+                # Display distance to target
                 distance = calculate_distance(estimated_drop_point, center)
+                cv2.putText(frame, f"Distance: {distance:.2f}m", (10, 60), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 0, 0), 2)
 
-                # Düşüş noktası ve hedef arasındaki mesafeyi ekrana yazdır
-                cv2.putText(frame, f"Distance to target: {distance:.2f} meters", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 0, 0), 2)
-
-            else:
-                detected_shape = "unknown"
-                num_vertices = 0
-                vertices = []
-
-
-            cv2.putText(frame, f"Shape: {detected_shape}", (500, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 0, 0), 2)
-            cv2.putText(frame, f"Target Color: {target_color}", (500, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
+            # Display status information
+            cv2.putText(frame, f"Shape: {detected_shape}", (500, 30), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 0, 0), 2)
+            cv2.putText(frame, f"Target: {target_color}", (500, 60), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 0), 2)
             
-            # Display payload status / payload durumunu göster
+            # Payload status
             red_status = "DROPPED" if red_payload_dropped else "READY"
             blue_status = "DROPPED" if blue_payload_dropped else "READY"
-            red_color = (0, 0, 255) if red_payload_dropped else (0, 255, 0)  # Red if dropped, Green if ready
-            blue_color = (255, 0, 0) if blue_payload_dropped else (0, 255, 0)  # Blue if dropped, Green if ready
+            cv2.putText(frame, f"Red Payload: {red_status}", (10, 90), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255) if red_payload_dropped else (0, 255, 0), 2)
+            cv2.putText(frame, f"Blue Payload: {blue_status}", (10, 115), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0) if blue_payload_dropped else (0, 255, 0), 2)
             
-            cv2.putText(frame, f"Red Payload (S1): {red_status}", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.6, red_color, 2)
-            cv2.putText(frame, f"Blue Payload (S2): {blue_status}", (10, 115), cv2.FONT_HERSHEY_SIMPLEX, 0.6, blue_color, 2)
-            
-            # Mission completion status
             if red_payload_dropped and blue_payload_dropped:
-                cv2.putText(frame, "MISSION COMPLETE!", (10, 190), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 3)
-                        
-            #raspta ekransiz calisirken bu satiri yorum satirina al yoksa error verir
-            #frame_resized = cv2.resize(frame, resolution)
+                cv2.putText(frame, "MISSION COMPLETE!", (10, 190), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 3)
+            
+            # Show frame
             cv2.imshow("GTU KUZGUN", frame)
-            #cv2.imshow("GTU KUZGUN", mask)
-
-
-            if cv2.waitKey(10) & 0xFF == ord('q'):
+            
+            # Keyboard controls
+            key = cv2.waitKey(10) & 0xFF
+            if key == ord('q'):
                 break
-            elif cv2.waitKey(10) & 0xFF == ord('r'):  # Press 'r' to reset servos / close the servos
+            elif key == ord('r'):
                 servo_controller.reset_servos()
-                red_payload_dropped = False
-                blue_payload_dropped = False
-                print("Servos reset - ready for next mission")
-            elif cv2.waitKey(10) & 0xFF == ord('o'):  # Press 'o' to open servos / to place the payloads
-                servo_controller.drop_both_payloads() # using the same function that is used to drop as it opens the servos
-                print("Servos are open - load the payloads")
-            elif cv2.waitKey(10) & 0xFF == ord('t'):  # Press 't' to test servos
-                servo_controller.test_servos()
-            elif cv2.waitKey(10) & 0xFF == ord('1'):  # Press '1' to manually drop red payload
-                if not red_payload_dropped:
-                    servo_controller.drop_payload_1()
-                    red_payload_dropped = True
-                    print("Manual drop: Red payload (Servo 1)")
-            elif cv2.waitKey(10) & 0xFF == ord('2'):  # Press '2' to manually drop blue payload
-                if not blue_payload_dropped:
-                    servo_controller.drop_payload_2()
-                    blue_payload_dropped = True
-                    print("Manual drop: Blue payload (Servo 2)")
+                red_payload_dropped = blue_payload_dropped = False
+                print("Servos reset")
+            elif key == ord('o'):
+                servo_controller.drop_both_payloads()
+                print("Servos opened for loading")
+            elif key == ord('1') and not red_payload_dropped:
+                servo_controller.drop_payload_1()
+                red_payload_dropped = True
+                print("Manual red payload drop")
+            elif key == ord('2') and not blue_payload_dropped:
+                servo_controller.drop_payload_2()
+                blue_payload_dropped = True
+                print("Manual blue payload drop")
 
     except Exception as e:
         print(f"Error: {e}")
-
     finally:
         servo_controller.cleanup()
         camera.release()
-    
+        cv2.destroyAllWindows()
 
-# Drone bilgilerini al
 def get_drone_info(vehicle_instance):
     try:
-        velocity = vehicle_instance.get_speed()  # m/s
-        altitude = vehicle_instance.get_altitude()  # metre
-        
-        # Eğer dronekit bağlı değilse veya veri alamıyorsak test değerleri kullan
-        if velocity is None or velocity == 0:
-            velocity = 15  # Test için 15 m/s hız
-        if altitude is None or altitude == 0:
-            altitude = 20  # Test için varsayılan yükseklik
-        if altitude < 1:
-            altitude = 20
-            
+        velocity = vehicle_instance.get_speed() or 15  # Default 15 m/s
+        altitude = vehicle_instance.get_altitude() or 20  # Default 20 m
+        return velocity, altitude
     except Exception as e:
-        print(f"Drone bağlantı hatası: {e}")
-        # Bağlantı hatası durumunda test değerleri
-        velocity = 15  # Test için 15 m/s hız
-        altitude = 20  # Test için varsayılan yükseklik
-        
-    return velocity, altitude
+        print(f"Drone info error: {e}")
+        return 15, 20  # Fallback values
 
-# Düşüş noktasını hesapla
 def calculate_drop_point(aircraft_position, velocity, altitude):
-    # Güvenlik kontrolleri - negatif veya sıfır değerleri düzelt
-    if velocity is None or velocity <= 0:
-        velocity = 2  # Minimum hız
-    if altitude is None or altitude <= 0:
-        altitude = 2  # Minimum yükseklik
-    
-    # Fizik hesaplaması - serbest düşüş süresi
-    time_to_fall = math.sqrt(abs(2 * altitude / g))  # abs() ile negatif değerleri engelle
+    time_to_fall = math.sqrt(max(0.1, 2 * altitude / g))  # Prevent math domain errors
     drop_distance = velocity * time_to_fall
-    
-    # Piksel cinsinden düşüş mesafesi - doğru formül
-    #drop_pixel = (drop_distance / max_distance) * image_width
-
-    # Güvenli int() dönüşümü
-    try:
-        # bişey olursa drop pixeli ekle
-        drop_x = int(aircraft_position[0] + drop_distance)  # Düşüş noktası geride olmalı (sol taraf)
-        drop_y = int(aircraft_position[1])
-    except (ValueError, TypeError):
-        # Hata durumunda güvenli varsayılan değerler
-        drop_x = int(aircraft_position[0])
-        drop_y = int(aircraft_position[1])
-    
+    drop_x = int(aircraft_position[0] + drop_distance * (image_width / max_distance))
+    drop_y = int(aircraft_position[1])
     return (drop_x, drop_y)
 
-# Yükün şu an bırakılması durumunda düşeceği konumun hedefe uzaklığını hesaplama
-def calculate_distance(estimated_drop_point, target_position=None):
+def calculate_distance(point1, point2):
+    if point1 is None or point2 is None:
+        return 0
+    dx = (point1[0] - point2[0]) * (max_distance / image_width)
+    dy = (point1[1] - point2[1]) * (max_width / image_height)
+    return math.sqrt(dx**2 + dy**2)
 
-    if target_position is not None:
+def show_estimated_drop_point(frame, x, y):
+    cv2.circle(frame, (x, y), 5, (0, 0, 255), -1)
+    cv2.line(frame, (x, 0), (x, image_height), (0, 0, 255), 1)
+    cv2.putText(frame, "Drop Point", (x + 10, y - 10), 
+                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 1, cv2.LINE_AA)
 
-        # Yükün şu an bırakılması durumunda düşeceği konumun hedefe uzaklığını hesaplama (x) (piksel)
-        horizontal_distance = abs(target_position[0] - estimated_drop_point[0])
-    
-        # Gerçek mesafeyi hesaplama (x) (metre)
-        real_distance_x = horizontal_distance * (max_distance / image_width)
-
-        # Yükün şu an bırakılması durumunda düşeceği konumun hedefe uzaklığını hesaplama (y) (piksel)
-        vertical_distance = abs(target_position[1] - estimated_drop_point[1])
-    
-        # Gerçek mesafeyi hesaplama (y) (metre)
-        real_distance_y = vertical_distance * (max_width / image_height)
-    
-        # hipotenüs formülü ile asıl mesafe hesaplaması
-        real_distance = (real_distance_x ** 2 + real_distance_y ** 2) ** 0.5
-
-        return real_distance
-    
-    return None
-
-# Düşüş noktasını göster
-def show_estimated_drop_point(frame, drop_x, drop_y):
-    cv2.circle(frame, (drop_x, drop_y), 5, (0, 0, 255), -1) # drop point noktasını çiz
-    cv2.line(frame, (drop_x, 0), (drop_x, image_height), (0, 0, 255), 1) # düşüş noktasından geçen y doğrusunu çiz
-    cv2.putText(frame, "Drop Point", (drop_x + 10, drop_y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 1, cv2.LINE_AA) # drop point metnini yaz
-    
-
-# Uçuş verilerini ekrana yazdır
 def display_flight_info(frame, altitude, velocity):
-    flight_info = f"Altitude: {altitude} m | Velocity: {velocity} m/s"
-    cv2.putText(frame, flight_info, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 0, 0), 2, cv2.LINE_AA)
-
-
+    info = f"Altitude: {altitude:.1f}m | Velocity: {velocity:.1f}m/s"
+    cv2.putText(frame, info, (10, 30), 
+                cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 0, 0), 2, cv2.LINE_AA)
 
 if __name__ == "__main__":
     main()
