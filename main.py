@@ -199,9 +199,16 @@ def get_drone_info(vehicle_instance):
         return 15, 20  # Fallback values
 
 def calculate_drop_point(aircraft_position, velocity, altitude):
-    time_to_fall = math.sqrt(max(0.1, 2 * altitude / g))  # Prevent math domain errors
+    # burası düzenlenecek !!!!!!!!!!
+    if velocity == 0:
+        velocity = 20
+    if altitude == 0:
+        altitude = 20
+        
+    time_to_fall = abs((2 * altitude / g)) ** 0.5
     drop_distance = velocity * time_to_fall
-    drop_x = int(aircraft_position[0] + drop_distance * (image_width / max_distance))
+    
+    drop_x = int(aircraft_position[0] + drop_distance)
     drop_y = int(aircraft_position[1])
     return (drop_x, drop_y)
 
