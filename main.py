@@ -241,6 +241,8 @@ def get_drone_info(vehicle_instance):
             velocity = 15  # Test için 15 m/s hız
         if altitude is None or altitude == 0:
             altitude = camera_height  # Test için varsayılan yükseklik
+        if altitude < 1:
+            altitude = 20
             
     except Exception as e:
         print(f"Drone bağlantı hatası: {e}")
