@@ -148,6 +148,7 @@ def main():
                 
                 # Visual feedback - draw contours based on target detection with correct area
                 if target_color == "red" and (4.5 >= real_area >= 3.5) and num_vertices == 4:
+                    print("Reddd\n\n\n")
                     cv2.drawContours(frame, [largest_contour], -1, (0, 0, 255), 3)  # Red contour for red target
                     cv2.putText(frame, "RED TARGET", (center[0]-50, center[1]-30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
                     cv2.circle(frame, center, 5, (0, 255, 255), -1)
