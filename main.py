@@ -147,16 +147,16 @@ def main():
                         print("Blue target detected but red payload already dropped")
                 
                 # Visual feedback - draw contours based on target detection with correct area
-                if target_color == "red" and (4.5 >= real_area >= 3.5) and num_vertices == 4:
-                    print("Reddd\n\n\n")
+                if target_color == "red":  # Sadece renk kontrolü
+                    print(f"RED: real_area={real_area}, num_vertices={num_vertices}")
                     cv2.drawContours(frame, [largest_contour], -1, (0, 0, 255), 3)  # Red contour for red target
                     cv2.putText(frame, "RED TARGET", (center[0]-50, center[1]-30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
                     cv2.circle(frame, center, 5, (0, 255, 255), -1)
                     # Draw the vertices on the frame
                     for vertex in vertices:
                         cv2.circle(frame, tuple(vertex), 5, (255, 255, 255), -1)
-                elif target_color == "blue" and (25 >= real_area >= 10) and num_vertices == 4:  # Geçici geniş aralık
-                    print("BLUE TARGET DETECTED!!!\n\n\n")
+                elif target_color == "blue":  # Sadece renk kontrolü
+                    print(f"BLUE: real_area={real_area}, num_vertices={num_vertices}")
                     cv2.drawContours(frame, [largest_contour], -1, (255, 0, 0), 3)  # Blue contour for blue target
                     cv2.putText(frame, "BLUE TARGET", (center[0]-50, center[1]-30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
                     cv2.circle(frame, center, 5, (0, 255, 255), -1)
