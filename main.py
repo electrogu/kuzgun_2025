@@ -132,7 +132,7 @@ def main():
                 common_control = (dx - 15) <= cx <= (dx + 15) and control and num_vertices == 4
                 
                 # Drop logic based on target color and specific area requirements
-                if (common_control and (5 >= real_area >= 3 or 16.5 >= real_area >= 14.5)):
+                if (common_control and (5 >= real_area >= 3 or 16.5 >= real_area >= 14)):
                     if target_color == "blue" and not red_payload_dropped:
                         print("Blue target detected - dropping RED payload (Servo 1)")
                         servo_controller.drop_payload_1()
@@ -148,7 +148,7 @@ def main():
                     elif target_color == "unknown":
                         print("Target color unknown - no payload drop")
                 
-                if ( (5 >= real_area >= 3 or 16.5 >= real_area >= 14.5) and num_vertices == 4): # hata payı +-1
+                if ( (5 >= real_area >= 3 or 16.5 >= real_area >= 14) and num_vertices == 4): # hata payı +-1
                     # Draw contour with color based on target type
                     if target_color == "red":
                         cv2.drawContours(frame, [largest_contour], -1, (255, 0, 0), 3)  # blue contour for red target
@@ -188,7 +188,7 @@ def main():
             blue_color = (255, 0, 0) if blue_payload_dropped else (0, 255, 0)  # Blue if dropped, Green if ready
             
             cv2.putText(frame, f"Red Payload (S1): {red_status}", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.6, red_color, 2)
-            cv2.putText(frame, f"Blue Payload (S2): {blue_status}", (10, 115), cv2.FONT_HERSHEY_SIMPLEX, 0.6, blue_color, 2)
+            cv2.putText(frame, f"Blue Payload (S2): {blue_status}", (10, 115), cv2.FONT_HERSHEY_SIMPLEX, 0.6, red_color, 2)
             
             # Mission completion status
             if red_payload_dropped and blue_payload_dropped:
