@@ -131,7 +131,7 @@ def main():
                 common_control = (dx - 15) <= cx <= (dx + 15) and control and num_vertices == 4
                 
                 # Drop logic based on target color
-                if (common_control and (5 >= real_area >= 3 or 18 >= real_area >= 14)):
+                if (common_control and (5 >= real_area >= 3 or 15.5 >= real_area >= 14.5)):
                     if target_color == "blue" and not red_payload_dropped:
                         print("Blue target detected - dropping RED payload (Servo 1)")
                         servo_controller.drop_payload_1()
