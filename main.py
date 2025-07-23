@@ -110,7 +110,7 @@ def main():
                 common_control = (dx - 15) <= cx <= (dx + 15) and control and num_vertices == 4
                 
                 # Debug output
-                print(f"Target: {target_color}, Area: {real_area:.2f}, Vertices: {num_vertices}, Center: {center}, Drop Point: {estimated_drop_point}")
+                print(f"Target: {target_color}, Area: {real_area:.2f}, Vertices: {num_vertices}, Center: {center}, Drop Point: {estimated_drop_point}, real area: {real_area}")
                 
                 # Draw contours based on target type and area
                 if target_color == "red" and (4.5 >= real_area >= 3.5):
