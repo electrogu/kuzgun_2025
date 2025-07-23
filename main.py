@@ -150,10 +150,10 @@ def main():
                 
                 if ( (5 >= real_area >= 3 or 16.5 >= real_area >= 14) and num_vertices == 4): # hata payı +-1
                     # Draw contour with color based on target type
-                    if target_color == "blue":
+                    if target_color == "blue" and (16.5 >= real_area >= 14):
                         cv2.drawContours(frame, [largest_contour], -1, (0, 0, 255), 3)  # red contour for blue target
                         cv2.putText(frame, "BLUE TARGET", (center[0]-50, center[1]-30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
-                    elif target_color == "red":
+                    if target_color == "red" and (14 >= real_area >= 10):
                         cv2.drawContours(frame, [largest_contour], -1, (255, 0, 0), 3)  # blue contour for red target
                         cv2.putText(frame, "RED TARGET", (center[0]-50, center[1]-30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
                     else:
