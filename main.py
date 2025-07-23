@@ -132,7 +132,7 @@ def main():
                 common_control = (dx - 15) <= cx <= (dx + 15) and control and num_vertices == 4
                 
                 # Drop logic based on target color and specific area requirements
-                if (common_control and (5 >= real_area >= 3 or 18 >= real_area >= 14)):
+                if (common_control and (5 >= real_area >= 3 or 16.5 >= real_area >= 14.5)):
                     if target_color == "blue" and not red_payload_dropped:
                         print("Blue target detected - dropping RED payload (Servo 1)")
                         servo_controller.drop_payload_1()
@@ -148,13 +148,13 @@ def main():
                     elif target_color == "unknown":
                         print("Target color unknown - no payload drop")
                 
-                if ( (5 >= real_area >= 3 or 17 >= real_area >= 15) and num_vertices == 4): # hata payı +-1
+                if ( (5 >= real_area >= 3 or 16.5 >= real_area >= 14.5) and num_vertices == 4): # hata payı +-1
                     # Draw contour with color based on target type
                     if target_color == "red":
-                        cv2.drawContours(frame, [largest_contour], -1, (0, 0, 255), 3)  # Red contour for red target
+                        cv2.drawContours(frame, [largest_contour], -1, (255, 0, 0), 3)  # blue contour for red target
                         cv2.putText(frame, "RED TARGET", (center[0]-50, center[1]-30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
                     elif target_color == "blue":
-                        cv2.drawContours(frame, [largest_contour], -1, (255, 0, 0), 3)  # Blue contour for blue target
+                        cv2.drawContours(frame, [largest_contour], -1, (0, 0, 255), 3)  # red contour for blue target
                         cv2.putText(frame, "BLUE TARGET", (center[0]-50, center[1]-30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
                     else:
                         cv2.drawContours(frame, [largest_contour], -1, (0, 255, 0), 2)  # Green contour for unknown
