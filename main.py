@@ -116,6 +116,7 @@ def main():
             gsd_x = (altitude * sensor_width) / (image_width * focal_length) #gsd değerini x için hesaplıyoruz
             gsd_y = (altitude * sensor_height) / (image_height * focal_length)  #gsd değerini y için hesaplıyoruz
             real_area = (gsd_x * gsd_y) * area # hesapladığımız gsd değerlerini ve ekrandaki pixel alanı çarparak gerçek alanı buluyoruz (yaklaşık olarak)
+            print(f"DEBUG: altitude={altitude}, area(pixels)={area}, gsd_x={gsd_x:.6f}, gsd_y={gsd_y:.6f}, real_area={real_area:.6f}")
             
             if largest_contour is not None:
                 
