@@ -155,7 +155,8 @@ def main():
                     # Draw the vertices on the frame
                     for vertex in vertices:
                         cv2.circle(frame, tuple(vertex), 5, (255, 255, 255), -1)
-                elif target_color == "blue" and (16.5 >= real_area >= 14.5) and num_vertices == 4:
+                elif target_color == "blue" and (25 >= real_area >= 10) and num_vertices == 4:  # Geçici geniş aralık
+                    print("BLUE TARGET DETECTED!!!\n\n\n")
                     cv2.drawContours(frame, [largest_contour], -1, (255, 0, 0), 3)  # Blue contour for blue target
                     cv2.putText(frame, "BLUE TARGET", (center[0]-50, center[1]-30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 0), 2)
                     cv2.circle(frame, center, 5, (0, 255, 255), -1)
