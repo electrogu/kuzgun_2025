@@ -262,12 +262,12 @@ def calculate_drop_point(aircraft_position, velocity, altitude):
     drop_distance = velocity * time_to_fall
     
     # Piksel cinsinden düşüş mesafesi - doğru formül
-    drop_pixel = (drop_distance / max_distance) * image_width
+    #drop_pixel = (drop_distance / max_distance) * image_width
 
     # Güvenli int() dönüşümü
     try:
         # bişey olursa drop pixeli ekle
-        drop_x = int(aircraft_position[0] - drop_pixel)  # Düşüş noktası geride olmalı (sol taraf)
+        drop_x = int(aircraft_position[0] + drop_distance)  # Düşüş noktası geride olmalı (sol taraf)
         drop_y = int(aircraft_position[1])
     except (ValueError, TypeError):
         # Hata durumunda güvenli varsayılan değerler
