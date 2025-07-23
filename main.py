@@ -191,8 +191,8 @@ def main():
 
 def get_drone_info(vehicle_instance):
     try:
-        velocity = vehicle_instance.get_speed() or 15  # Default 15 m/s
-        altitude = vehicle_instance.get_altitude() or 20  # Default 20 m
+        velocity = 20 #vehicle_instance.get_speed() or 15  # Default 15 m/s
+        altitude = 20 #vehicle_instance.get_altitude() or 20  # Default 20 m
         return velocity, altitude
     except Exception as e:
         print(f"Drone info error: {e}")
